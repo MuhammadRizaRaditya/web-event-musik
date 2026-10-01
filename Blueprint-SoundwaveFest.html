@@ -1,0 +1,1837 @@
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+<meta charset="UTF-8">
+<title>Blueprint Soundwave Fest 2026</title>
+<style>
+  @page { size: A4; margin: 2.5cm; }
+  body { font-family: 'Calibri', sans-serif; font-size: 11pt; line-height: 1.4; color: #222; }
+  h1 { font-size: 22pt; color: #FF6B00; border-bottom: 3px solid #FF6B00; padding-bottom: 6px; margin-top: 24pt; page-break-after: avoid; }
+  h2 { font-size: 15pt; color: #0A0A0A; margin-top: 18pt; page-break-after: avoid; }
+  h3 { font-size: 12pt; color: #333; margin-top: 12pt; page-break-after: avoid; }
+  p { text-align: justify; margin: 6pt 0; }
+  table { border-collapse: collapse; width: 100%; margin: 10pt 0; font-size: 10pt; }
+  th { background: #FF6B00; color: white; padding: 6pt 8pt; text-align: left; border: 1px solid #ddd; font-weight: bold; }
+  td { padding: 6pt 8pt; border: 1px solid #ddd; vertical-align: top; }
+  tr:nth-child(even) td { background: #f9f9f9; }
+  code, pre { font-family: 'Consolas', monospace; font-size: 9pt; background: #f5f5f5; padding: 2pt 6pt; }
+  pre { padding: 10pt; border-left: 3px solid #FF6B00; white-space: pre-wrap; margin: 8pt 0; }
+  ul, ol { margin: 6pt 0 6pt 20pt; }
+  li { margin: 3pt 0; }
+  .cover { text-align: center; padding-top: 200pt; page-break-after: always; }
+  .cover .title { font-size: 48pt; font-weight: bold; color: #0A0A0A; margin: 20pt 0; }
+  .cover .subtitle { font-size: 18pt; color: #FF6B00; font-weight: bold; letter-spacing: 3pt; }
+  .cover .tagline { font-size: 14pt; color: #666; font-style: italic; margin-top: 40pt; }
+  .cover .meta { font-size: 12pt; color: #888; margin-top: 80pt; line-height: 1.8; }
+  .badge { display: inline-block; background: #FF6B00; color: white; padding: 4pt 10pt; border-radius: 12pt; font-size: 10pt; margin: 4pt; }
+  .note { background: #FFF3E0; border-left: 4px solid #FF6B00; padding: 10pt 14pt; margin: 10pt 0; font-style: italic; }
+  .toc { background: #f9f9f9; border: 1px solid #ddd; padding: 15pt 25pt; margin: 15pt 0; }
+  .toc a { color: #0A0A0A; text-decoration: none; }
+  .toc li { margin: 4pt 0; }
+  .page-break { page-break-before: always; }
+</style>
+</head>
+<body>
+
+<!-- ============ COVER PAGE ============ -->
+<div class="cover">
+  <div class="subtitle">BLUEPRINT APLIKASI</div>
+  <div class="title">SOUNDWAVE<br>FEST 2026</div>
+  <div class="subtitle">MUSIC FESTIVAL EVENT MANAGEMENT<br>& TICKETING PLATFORM</div>
+  <div class="tagline">"Feel The Rhythm"</div>
+  <div class="meta">
+    <strong>Versi 1.0 — Draft for Review</strong><br>
+    Progressive Web App (PWA) berbasis<br>
+    Next.js + NestJS + PostgreSQL<br>
+    <br>
+    <em>Dokumen Perancangan Sistem Enterprise</em><br>
+    <br>
+    2026
+  </div>
+</div>
+
+<!-- ============ TABLE OF CONTENTS ============ -->
+<h1>DAFTAR ISI</h1>
+<div class="toc">
+<ol>
+<li>Executive Summary</li>
+<li>Analisis Bisnis</li>
+<li>Problem Statement</li>
+<li>Tujuan Sistem</li>
+<li>Scope dan Batasan</li>
+<li>Stakeholder Analysis</li>
+<li>Role dan Hak Akses (RBAC)</li>
+<li>Modul Fungsional</li>
+<li>Sitemap</li>
+<li>User Flow</li>
+<li>Arsitektur Sistem</li>
+<li>Rekomendasi Tech Stack</li>
+<li>Database Design</li>
+<li>ERD</li>
+<li>API Specification</li>
+<li>UML Diagram</li>
+<li>UI/UX Blueprint</li>
+<li>Business Rules</li>
+<li>Security</li>
+<li>Non-Functional Requirements</li>
+<li>Testing Strategy</li>
+<li>Deployment Architecture</li>
+<li>Roadmap Pengembangan</li>
+<li>Risiko dan Mitigasi</li>
+<li>Kesimpulan</li>
+</ol>
+</div>
+
+<!-- ============ 1. EXECUTIVE SUMMARY ============ -->
+<div class="page-break"></div>
+<h1>1. EXECUTIVE SUMMARY</h1>
+<p>Platform ini dirancang sebagai solusi terintegrasi untuk pengelolaan, promosi, dan penjualan tiket event musik/festival berbasis <strong>Progressive Web App (PWA)</strong>. Berbeda dari landing page konvensional, platform ini merupakan <strong>sistem event management end-to-end</strong> yang mencakup website publik untuk pengunjung, dashboard admin untuk penyelenggara, sistem ticketing dengan e-ticket QR Code, integrasi payment gateway Indonesia, manajemen konten (CMS), serta pelaporan penjualan dan kehadiran secara real-time.</p>
+<p><strong>Arsitektur:</strong> Modular Monolith dengan Next.js (frontend) + NestJS (backend) + PostgreSQL (database) + Redis (cache/queue) + Midtrans/Xendit (payment gateway).</p>
+<p><strong>Target:</strong> MVP live dalam 3 bulan, fitur lanjutan dalam 9 bulan.</p>
+
+<!-- ============ 2. ANALISIS BISNIS ============ -->
+<h1>2. ANALISIS BISNIS</h1>
+
+<h2>2.1 Latar Belakang dan Permasalahan</h2>
+<p>Industri event musik dan festival di Indonesia mengalami pertumbuhan signifikan. Namun, penyelenggara masih menghadapi berbagai permasalahan operasional:</p>
+<table>
+<tr><th>No</th><th>Permasalahan</th><th>Dampak</th></tr>
+<tr><td>1</td><td>Proses penjualan tiket manual atau semi-digital</td><td>Antrian panjang, human error</td></tr>
+<tr><td>2</td><td>Tidak ada sistem validasi tiket terpusat</td><td>Tiket palsu, double entry</td></tr>
+<tr><td>3</td><td>Data penjualan tersebar di berbagai platform</td><td>Sulit memantau real-time</td></tr>
+<tr><td>4</td><td>Komunikasi perubahan jadwal tidak efisien</td><td>Pengunjung tidak update</td></tr>
+<tr><td>5</td><td>Pengalaman pembelian tiket rumit</td><td>Cart abandonment tinggi</td></tr>
+<tr><td>6</td><td>Tidak ada kanal resmi untuk promosi</td><td>Ketergantungan medsos</td></tr>
+</table>
+
+<h2>2.2 Tujuan Pembangunan Aplikasi</h2>
+<ol>
+<li>Menyediakan website publik event yang menarik, informatif, dan responsif.</li>
+<li>Menjual tiket secara online dengan alur checkout yang efisien dan aman.</li>
+<li>Menerbitkan e-ticket berbasis QR Code yang dapat divalidasi di venue.</li>
+<li>Mencegah overselling melalui mekanisme concurrency control di level database.</li>
+<li>Menyediakan dashboard admin untuk pengelolaan event, artis, tiket, dan konten.</li>
+<li>Menyediakan laporan penjualan, pembayaran, dan kehadiran yang akurat.</li>
+<li>Mendukung operasional check-in dengan mode offline terbatas.</li>
+</ol>
+
+<h2>2.3 Sasaran dan Target Pengguna</h2>
+<table>
+<tr><th>Segmen</th><th>Deskripsi</th><th>Estimasi</th></tr>
+<tr><td>Pengunjung Event</td><td>Individu usia 18-40 tahun, aktif smartphone</td><td>80%</td></tr>
+<tr><td>Penyelenggara Event</td><td>Promotor, EO, venue operator</td><td>15%</td></tr>
+<tr><td>Staf Operasional</td><td>Gate staff, ticketing staff, finance</td><td>5%</td></tr>
+</table>
+
+<h2>2.4 Value Proposition</h2>
+<ul>
+<li><strong>Bagi Pengunjung:</strong> Pengalaman pembelian tiket cepat, aman, mobile-first; e-ticket digital; informasi lineup akurat.</li>
+<li><strong>Bagi Penyelenggara:</strong> Kontrol penuh atas penjualan, data real-time, pencegahan fraud, kanal promosi resmi.</li>
+<li><strong>Bagi Platform:</strong> Model bisnis berkelanjutan melalui biaya layanan per transaksi.</li>
+</ul>
+
+<h2>2.5 Ruang Lingkup Sistem</h2>
+<p><strong>Termasuk dalam scope:</strong></p>
+<ul>
+<li>Public website (landing page, lineup, jadwal, galeri, playlist)</li>
+<li>Sistem ticketing (kategori, harga, kuota, periode penjualan)</li>
+<li>Online checkout dan payment gateway</li>
+<li>E-ticket generation dan QR Code validation</li>
+<li>Dashboard admin (event, artis, tiket, order, customer)</li>
+<li>CMS (homepage, banner, FAQ, sponsor)</li>
+<li>Check-in scanner (PWA)</li>
+<li>Reporting dan analytics</li>
+</ul>
+<p><strong>Tidak termasuk:</strong></p>
+<ul>
+<li>Sistem akuntansi penuh (jurnal umum, buku besar, laporan keuangan formal)</li>
+<li>Manajemen kursi berreservasi (seat map)</li>
+<li>Aplikasi native iOS/Android</li>
+<li>Live streaming event</li>
+</ul>
+
+<h2>2.6 Batasan Sistem</h2>
+<table>
+<tr><th>No</th><th>Batasan</th><th>Keterangan</th></tr>
+<tr><td>1</td><td>Pembayaran memerlukan koneksi internet</td><td>Tidak dapat diproses sepenuhnya offline</td></tr>
+<tr><td>2</td><td>Validasi check-in offline bersifat terbatas</td><td>Cache lokal; sinkronisasi saat online</td></tr>
+<tr><td>3</td><td>Kapasitas awal</td><td>Event hingga 50.000 tiket per event</td></tr>
+<tr><td>4</td><td>Bahasa</td><td>Bahasa Indonesia utama; multilingual belum diprioritaskan</td></tr>
+</table>
+
+<h2>2.7 Proses Bisnis Berjalan vs Diusulkan</h2>
+<p><strong>Proses Bisnis Berjalan:</strong></p>
+<pre>Promosi event → Pengunjung datang ke loket → Antri → Bayar tunai/kartu → 
+Tiket kertas dicetak → Masuk venue → Tiket dipindai</pre>
+<p><strong>Proses Bisnis Diusulkan:</strong></p>
+<pre>Promosi digital (website/PWA) → Pengunjung memilih event &amp; tiket → 
+Checkout online → Pembayaran via payment gateway → E-ticket QR otomatis → 
+Check-in scan di venue → Validasi real-time → Masuk venue</pre>
+
+<h2>2.8 Business Capability Map</h2>
+<table>
+<tr><th>Domain Kapabilitas</th><th>Sub-Kapabilitas</th><th>Prioritas</th></tr>
+<tr><td>Event Management</td><td>CRUD event, jadwal, venue, stage</td><td>Tinggi</td></tr>
+<tr><td>Artist Management</td><td>CRUD artis, lineup, relasi event</td><td>Tinggi</td></tr>
+<tr><td>Ticketing</td><td>Kategori tiket, kuota, harga, periode</td><td>Tinggi</td></tr>
+<tr><td>Order &amp; Payment</td><td>Checkout, payment gateway, refund</td><td>Tinggi</td></tr>
+<tr><td>E-Ticket</td><td>QR generation, PDF, email delivery</td><td>Tinggi</td></tr>
+<tr><td>Check-in</td><td>QR scan, validasi, offline mode</td><td>Tinggi</td></tr>
+<tr><td>CMS</td><td>Homepage, banner, FAQ, galeri</td><td>Sedang</td></tr>
+<tr><td>Customer</td><td>Profil, riwayat, preferensi</td><td>Sedang</td></tr>
+<tr><td>Reporting</td><td>Penjualan, pembayaran, check-in</td><td>Sedang</td></tr>
+<tr><td>Promotion</td><td>Voucher, promo code, tracking</td><td>Sedang</td></tr>
+<tr><td>Notification</td><td>Email, push, WhatsApp</td><td>Rendah</td></tr>
+</table>
+
+<h2>2.9 Stakeholder dan Kebutuhan</h2>
+<table>
+<tr><th>Stakeholder</th><th>Peran</th><th>Kebutuhan Utama</th></tr>
+<tr><td>Pemilik Bisnis</td><td>Pemilik platform</td><td>ROI, laporan pendapatan, skalabilitas</td></tr>
+<tr><td>Event Organizer</td><td>Membuat &amp; mengelola event</td><td>Kontrol penuh, dashboard real-time</td></tr>
+<tr><td>Finance</td><td>Verifikasi pembayaran &amp; refund</td><td>Rekonsiliasi, laporan keuangan</td></tr>
+<tr><td>Gate Staff</td><td>Validasi tiket di venue</td><td>Scanner cepat, mode offline</td></tr>
+<tr><td>Customer</td><td>Membeli &amp; menggunakan tiket</td><td>Proses mudah, tiket digital</td></tr>
+<tr><td>Developer</td><td>Membangun &amp; memelihara sistem</td><td>Dokumentasi API, arsitektur jelas</td></tr>
+<tr><td>Payment Provider</td><td>Memproses pembayaran</td><td>Integrasi API yang aman</td></tr>
+</table>
+
+<!-- ============ 3. PROBLEM STATEMENT ============ -->
+<div class="page-break"></div>
+<h1>3. PROBLEM STATEMENT</h1>
+<div class="note">
+<strong>Bagaimana merancang platform digital terintegrasi yang mampu menjual tiket event musik secara aman, mencegah overselling dan tiket palsu, memberikan pengalaman pengguna yang premium dan cinematic, serta menyediakan dashboard operasional real-time bagi penyelenggara event?</strong>
+</div>
+<p>Platform ticketing event musik yang ada seringkali terfragmentasi: penjualan tiket melalui platform pihak ketiga dengan margin tinggi, penyelenggara tidak memiliki akses langsung ke data pelanggan, pengunjung menghadapi pengalaman tidak konsisten antara website promosi dan proses pembelian tiket. Belum lagi risiko overselling, tiket palsu, dan kesulitan rekonsiliasi pembayaran.</p>
+
+<!-- ============ 4. TUJUAN SISTEM ============ -->
+<h1>4. TUJUAN SISTEM</h1>
+
+<h2>4.1 Tujuan Fungsional</h2>
+<table>
+<tr><th>Kode</th><th>Tujuan</th></tr>
+<tr><td>F-01</td><td>Menyediakan landing page event dinamis</td></tr>
+<tr><td>F-02</td><td>Mengelola kategori tiket dengan kuota, harga, dan periode</td></tr>
+<tr><td>F-03</td><td>Memproses pembelian tiket online dengan validasi stok real-time</td></tr>
+<tr><td>F-04</td><td>Menerbitkan e-ticket QR Code setelah pembayaran terverifikasi</td></tr>
+<tr><td>F-05</td><td>Memvalidasi tiket di venue melalui scan QR Code</td></tr>
+<tr><td>F-06</td><td>Menyediakan dashboard admin untuk operasional</td></tr>
+<tr><td>F-07</td><td>Mengelola konten website melalui CMS</td></tr>
+<tr><td>F-08</td><td>Mengirim notifikasi email untuk konfirmasi dan pengingat</td></tr>
+</table>
+
+<h2>4.2 Tujuan Non-Fungsional</h2>
+<table>
+<tr><th>Aspek</th><th>Target</th></tr>
+<tr><td>Performance</td><td>API &lt; 500ms (P95); halaman publik &lt; 3 detik (3G)</td></tr>
+<tr><td>Scalability</td><td>10.000 concurrent users saat flash sale</td></tr>
+<tr><td>Availability</td><td>Uptime 99.5%</td></tr>
+<tr><td>Security</td><td>OWASP Top 10 compliance</td></tr>
+<tr><td>Accessibility</td><td>WCAG 2.1 Level AA</td></tr>
+<tr><td>PWA</td><td>Installable, offline-capable</td></tr>
+</table>
+
+<!-- ============ 5. SCOPE DAN BATASAN ============ -->
+<div class="page-break"></div>
+<h1>5. SCOPE DAN BATASAN</h1>
+
+<h2>5.1 Scope Fungsional per Modul</h2>
+<table>
+<tr><th>Modul</th><th>Fitur Utama</th><th>Prioritas</th></tr>
+<tr><td>Public Website</td><td>Homepage, event detail, lineup, FAQ</td><td>Must-have</td></tr>
+<tr><td>Event Management</td><td>CRUD event, status event, SEO meta</td><td>Must-have</td></tr>
+<tr><td>Artist Management</td><td>CRUD artis, lineup, relasi event</td><td>Must-have</td></tr>
+<tr><td>Ticketing</td><td>CRUD kategori tiket, kuota, harga</td><td>Must-have</td></tr>
+<tr><td>Checkout</td><td>Pilih tiket, form pembeli, ringkasan</td><td>Must-have</td></tr>
+<tr><td>Payment</td><td>Integrasi gateway, webhook</td><td>Must-have</td></tr>
+<tr><td>E-Ticket</td><td>QR generation, PDF, email</td><td>Must-have</td></tr>
+<tr><td>Check-in</td><td>Scan QR, validasi, offline mode</td><td>Should-have</td></tr>
+<tr><td>Customer</td><td>Registrasi, login, profil, riwayat</td><td>Should-have</td></tr>
+<tr><td>CMS</td><td>Homepage builder, banner, FAQ</td><td>Should-have</td></tr>
+<tr><td>Reporting</td><td>Penjualan, pembayaran, check-in</td><td>Should-have</td></tr>
+<tr><td>Promotion</td><td>Voucher, promo code</td><td>Could-have</td></tr>
+<tr><td>Notification</td><td>Email, push notification</td><td>Could-have</td></tr>
+</table>
+
+<h2>5.2 Batasan Teknis</h2>
+<ul>
+<li>Sepenuhnya berbasis web (PWA), tidak ada aplikasi native</li>
+<li>Payment gateway harus menggunakan API resmi dan webhook terverifikasi</li>
+<li>Modul finance bersifat <strong>laporan operasional ticketing</strong>, bukan sistem akuntansi penuh</li>
+</ul>
+
+<!-- ============ 6. STAKEHOLDER ANALYSIS ============ -->
+<h1>6. STAKEHOLDER ANALYSIS</h1>
+<table>
+<tr><th>Stakeholder</th><th>Influence</th><th>Interest</th><th>Strategi Engagement</th></tr>
+<tr><td>Pemilik Bisnis</td><td>Tinggi</td><td>Tinggi</td><td>Regular reporting, strategic review</td></tr>
+<tr><td>Event Organizer</td><td>Tinggi</td><td>Tinggi</td><td>Dashboard real-time, training</td></tr>
+<tr><td>Finance</td><td>Sedang</td><td>Tinggi</td><td>Laporan akurat, akses terbatas</td></tr>
+<tr><td>Gate Staff</td><td>Rendah</td><td>Sedang</td><td>Scanner UI yang sederhana</td></tr>
+<tr><td>Customer</td><td>Sedang</td><td>Tinggi</td><td>UX yang mulus, notifikasi proaktif</td></tr>
+<tr><td>Payment Provider</td><td>Tinggi</td><td>Sedang</td><td>Integrasi sesuai spesifikasi API</td></tr>
+</table>
+
+<!-- ============ 7. RBAC ============ -->
+<div class="page-break"></div>
+<h1>7. ROLE DAN HAK AKSES (RBAC)</h1>
+
+<h2>7.1 Definisi Role</h2>
+<table>
+<tr><th>Role</th><th>Deskripsi</th><th>Level</th></tr>
+<tr><td>Super Admin</td><td>Mengelola seluruh sistem, user, role, konfigurasi</td><td>System-wide</td></tr>
+<tr><td>Event Organizer / Admin Event</td><td>Mengelola event yang ditugaskan</td><td>Event-scoped</td></tr>
+<tr><td>Ticketing Staff / Gate Staff</td><td>Validasi tiket, check-in</td><td>Event-scoped</td></tr>
+<tr><td>Finance / Accounting</td><td>Melihat transaksi, rekonsiliasi, laporan keuangan</td><td>Organization-scoped</td></tr>
+<tr><td>Customer</td><td>Melihat event, membeli tiket, mengelola profil</td><td>Self-scoped</td></tr>
+</table>
+
+<h2>7.2 Tabel Hak Akses per Modul</h2>
+<table>
+<tr><th>Modul</th><th>Super Admin</th><th>Event Organizer</th><th>Gate Staff</th><th>Finance</th><th>Customer</th></tr>
+<tr><td>User &amp; Role Management</td><td>CRUD</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>System Settings</td><td>CRUD</td><td>R</td><td>-</td><td>R</td><td>-</td></tr>
+<tr><td>Event Management</td><td>CRUD (all)</td><td>CRUD (assigned)</td><td>R</td><td>R</td><td>R (public)</td></tr>
+<tr><td>Artist Management</td><td>CRUD</td><td>CRUD (assigned)</td><td>R</td><td>-</td><td>R (public)</td></tr>
+<tr><td>Schedule Management</td><td>CRUD</td><td>CRUD (assigned)</td><td>R</td><td>-</td><td>R (public)</td></tr>
+<tr><td>Ticket Management</td><td>CRUD</td><td>CRUD (assigned)</td><td>R</td><td>R</td><td>R (public)</td></tr>
+<tr><td>Order Management</td><td>CRUD</td><td>CRUD (assigned)</td><td>R (status)</td><td>R</td><td>CR (own)</td></tr>
+<tr><td>Payment Management</td><td>CRUD</td><td>R (assigned)</td><td>-</td><td>CRUD</td><td>CR (own)</td></tr>
+<tr><td>E-Ticket Management</td><td>CRUD</td><td>R (assigned)</td><td>R (validate)</td><td>R</td><td>CR (own)</td></tr>
+<tr><td>Check-in Management</td><td>CRUD</td><td>R</td><td>CRUD</td><td>-</td><td>R (own)</td></tr>
+<tr><td>Customer Management</td><td>CRUD</td><td>R (assigned)</td><td>-</td><td>R</td><td>CRU (own)</td></tr>
+<tr><td>CMS</td><td>CRUD</td><td>CRUD (assigned)</td><td>-</td><td>-</td><td>R</td></tr>
+<tr><td>Gallery / Memories</td><td>CRUD</td><td>CRUD (assigned)</td><td>-</td><td>-</td><td>CR (own)</td></tr>
+<tr><td>Playlist</td><td>CRUD</td><td>CRUD (assigned)</td><td>-</td><td>-</td><td>R</td></tr>
+<tr><td>Voucher Management</td><td>CRUD</td><td>CRUD (assigned)</td><td>-</td><td>R</td><td>R (public)</td></tr>
+<tr><td>Notification</td><td>CRUD</td><td>CRUD (assigned)</td><td>-</td><td>-</td><td>R (own)</td></tr>
+<tr><td>Reports</td><td>CRUD (all)</td><td>R (assigned)</td><td>R (check-in)</td><td>CRUD</td><td>-</td></tr>
+<tr><td>Finance Reports</td><td>CRUD</td><td>R (own event)</td><td>-</td><td>CRUD</td><td>-</td></tr>
+<tr><td>Audit Logs</td><td>R</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+</table>
+<p><strong>Keterangan:</strong> C = Create, R = Read, U = Update, D = Delete</p>
+
+<h2>7.3 Implementasi RBAC</h2>
+<p>RBAC diimplementasikan dengan tabel roles, permissions, dan role_permissions. Untuk multi-tenant isolation, digunakan <strong>PostgreSQL Row-Level Security (RLS)</strong> untuk memastikan Event Organizer hanya dapat mengakses data event yang ditugaskan.</p>
+
+<!-- ============ 8. MODUL FUNGSIONAL ============ -->
+<div class="page-break"></div>
+<h1>8. MODUL FUNGSIONAL</h1>
+
+<h2>8.1 Public Website / Event Landing Page</h2>
+<table>
+<tr><th>Section</th><th>Komponen UI</th><th>Data Dibutuhkan</th></tr>
+<tr><td>Navbar</td><td>Logo, menu, CTA "Buy Tickets"</td><td>Konfigurasi navigasi</td></tr>
+<tr><td>Hero</td><td>Full-bleed image, title, CTA</td><td>Banner, judul, tanggal, venue</td></tr>
+<tr><td>Countdown</td><td>Timer countdown ke tanggal event</td><td>Tanggal mulai event</td></tr>
+<tr><td>Event Info</td><td>Deskripsi, jam operasional, T&amp;C</td><td>Deskripsi, jadwal, T&amp;C</td></tr>
+<tr><td>Lineup</td><td>Grid kartu artis</td><td>Data artis, headliner flag</td></tr>
+<tr><td>Schedule</td><td>Jadwal per hari dan per stage</td><td>Data schedule, stage, artist</td></tr>
+<tr><td>Playlist</td><td>Embed Spotify/YouTube Music</td><td>URL playlist</td></tr>
+<tr><td>Gallery</td><td>Grid foto/video event</td><td>Media assets</td></tr>
+<tr><td>Memories</td><td>Testimoni/foto dari pengunjung</td><td>Submissions (approved)</td></tr>
+<tr><td>FAQ</td><td>Accordion pertanyaan umum</td><td>FAQ entries</td></tr>
+<tr><td>Footer</td><td>Social media, kontak, sponsor</td><td>Konfigurasi footer</td></tr>
+</table>
+
+<h2>8.2 Event Management</h2>
+<table>
+<tr><th>Field</th><th>Tipe</th><th>Wajib</th><th>Keterangan</th></tr>
+<tr><td>id</td><td>UUID</td><td>Ya</td><td>Primary key</td></tr>
+<tr><td>name</td><td>VARCHAR(255)</td><td>Ya</td><td>Nama event</td></tr>
+<tr><td>slug</td><td>VARCHAR(255)</td><td>Ya</td><td>Unique, untuk SEO URL</td></tr>
+<tr><td>description</td><td>TEXT</td><td>Ya</td><td>Deskripsi event</td></tr>
+<tr><td>banner_url</td><td>VARCHAR(500)</td><td>Tidak</td><td>URL banner</td></tr>
+<tr><td>poster_url</td><td>VARCHAR(500)</td><td>Tidak</td><td>URL poster</td></tr>
+<tr><td>start_date</td><td>TIMESTAMPTZ</td><td>Ya</td><td>Tanggal &amp; jam mulai</td></tr>
+<tr><td>end_date</td><td>TIMESTAMPTZ</td><td>Ya</td><td>Tanggal &amp; jam selesai</td></tr>
+<tr><td>venue_id</td><td>UUID</td><td>Ya</td><td>FK ke venues</td></tr>
+<tr><td>status</td><td>ENUM</td><td>Ya</td><td>draft, published, ongoing, completed, cancelled</td></tr>
+<tr><td>organizer_id</td><td>UUID</td><td>Ya</td><td>FK ke users</td></tr>
+<tr><td>terms_conditions</td><td>TEXT</td><td>Tidak</td><td>Syarat &amp; ketentuan</td></tr>
+<tr><td>refund_policy</td><td>TEXT</td><td>Tidak</td><td>Kebijakan refund</td></tr>
+<tr><td>seo_title</td><td>VARCHAR(255)</td><td>Tidak</td><td>SEO title</td></tr>
+<tr><td>seo_description</td><td>VARCHAR(500)</td><td>Tidak</td><td>SEO description</td></tr>
+<tr><td>created_at</td><td>TIMESTAMPTZ</td><td>Ya</td><td>Auto</td></tr>
+<tr><td>updated_at</td><td>TIMESTAMPTZ</td><td>Ya</td><td>Auto</td></tr>
+<tr><td>deleted_at</td><td>TIMESTAMPTZ</td><td>Tidak</td><td>Soft delete</td></tr>
+</table>
+
+<h2>8.3 Artist / Lineup Management</h2>
+<table>
+<tr><th>Field</th><th>Tipe</th><th>Wajib</th><th>Keterangan</th></tr>
+<tr><td>id</td><td>UUID</td><td>Ya</td><td>Primary key</td></tr>
+<tr><td>name</td><td>VARCHAR(255)</td><td>Ya</td><td>Nama artis/band</td></tr>
+<tr><td>bio</td><td>TEXT</td><td>Tidak</td><td>Biografi</td></tr>
+<tr><td>genre</td><td>VARCHAR(100)</td><td>Tidak</td><td>Genre musik</td></tr>
+<tr><td>photo_url</td><td>VARCHAR(500)</td><td>Tidak</td><td>Foto profil</td></tr>
+<tr><td>social_media</td><td>JSONB</td><td>Tidak</td><td>Link social media</td></tr>
+<tr><td>music_links</td><td>JSONB</td><td>Tidak</td><td>Spotify, YouTube, dll</td></tr>
+<tr><td>is_headliner</td><td>BOOLEAN</td><td>Ya</td><td>Default false</td></tr>
+<tr><td>display_order</td><td>INTEGER</td><td>Tidak</td><td>Urutan lineup</td></tr>
+</table>
+
+<h2>8.4 Event Schedule / Running Order</h2>
+<table>
+<tr><th>Field</th><th>Tipe</th><th>Wajib</th><th>Keterangan</th></tr>
+<tr><td>id</td><td>UUID</td><td>Ya</td><td>Primary key</td></tr>
+<tr><td>event_id</td><td>UUID</td><td>Ya</td><td>FK ke events</td></tr>
+<tr><td>stage_id</td><td>UUID</td><td>Ya</td><td>FK ke event_stages</td></tr>
+<tr><td>artist_id</td><td>UUID</td><td>Ya</td><td>FK ke artists</td></tr>
+<tr><td>day</td><td>INTEGER</td><td>Ya</td><td>Hari ke-n</td></tr>
+<tr><td>start_time</td><td>TIMESTAMPTZ</td><td>Ya</td><td>Jam mulai</td></tr>
+<tr><td>end_time</td><td>TIMESTAMPTZ</td><td>Ya</td><td>Jam selesai</td></tr>
+<tr><td>duration_minutes</td><td>INTEGER</td><td>Ya</td><td>Durasi tampil</td></tr>
+<tr><td>status</td><td>ENUM</td><td>Ya</td><td>scheduled, ongoing, completed, cancelled</td></tr>
+</table>
+
+<h2>8.5 Ticketing Management</h2>
+<table>
+<tr><th>Field</th><th>Tipe</th><th>Wajib</th><th>Keterangan</th></tr>
+<tr><td>id</td><td>UUID</td><td>Ya</td><td>Primary key</td></tr>
+<tr><td>event_id</td><td>UUID</td><td>Ya</td><td>FK ke events</td></tr>
+<tr><td>name</td><td>VARCHAR(100)</td><td>Ya</td><td>Early Bird, Presale, Regular, VIP, VVIP</td></tr>
+<tr><td>description</td><td>TEXT</td><td>Tidak</td><td>Deskripsi tiket</td></tr>
+<tr><td>price</td><td>DECIMAL(12,2)</td><td>Ya</td><td>Harga tiket</td></tr>
+<tr><td>quota</td><td>INTEGER</td><td>Ya</td><td>Kuota tiket</td></tr>
+<tr><td>sold_count</td><td>INTEGER</td><td>Ya</td><td>Jumlah terjual</td></tr>
+<tr><td>sale_start</td><td>TIMESTAMPTZ</td><td>Ya</td><td>Mulai penjualan</td></tr>
+<tr><td>sale_end</td><td>TIMESTAMPTZ</td><td>Ya</td><td>Akhir penjualan</td></tr>
+<tr><td>max_per_customer</td><td>INTEGER</td><td>Tidak</td><td>Batas pembelian per customer</td></tr>
+<tr><td>access_type</td><td>VARCHAR(50)</td><td>Tidak</td><td>daily, weekend, full_pass</td></tr>
+<tr><td>status</td><td>ENUM</td><td>Ya</td><td>available, almost_sold_out, sold_out, closed</td></tr>
+<tr><td>service_fee</td><td>DECIMAL(12,2)</td><td>Tidak</td><td>Biaya layanan</td></tr>
+<tr><td>tax_rate</td><td>DECIMAL(5,2)</td><td>Tidak</td><td>Pajak (%)</td></tr>
+</table>
+
+<h2>8.6 Online Order / Checkout</h2>
+<p><strong>Alur Checkout:</strong></p>
+<ol>
+<li>Pengguna memilih kategori tiket dan jumlah</li>
+<li>Sistem validasi kuota (dengan row-level locking)</li>
+<li>Pengguna mengisi data pembeli dan pemilik tiket</li>
+<li>Sistem menghitung subtotal, biaya layanan, pajak, diskon, total</li>
+<li>Order dibuat (status: pending) dengan batas waktu pembayaran</li>
+<li>Redirect ke payment gateway</li>
+<li>Webhook verifikasi pembayaran</li>
+<li>E-ticket diterbitkan dan dikirim via email</li>
+</ol>
+<p><strong>Status Order:</strong> pending → paid → completed / expired / cancelled / refunded</p>
+
+<h2>8.7 Payment Management</h2>
+<p><strong>Integrasi:</strong> Midtrans atau Xendit (API resmi).</p>
+<p><strong>Webhook Security:</strong></p>
+<ul>
+<li>Verifikasi signature HMAC menggunakan raw body (bukan parsed JSON)</li>
+<li>Idempotency: setiap event ID dari gateway hanya diproses sekali</li>
+<li>Verifikasi status langsung ke API gateway sebelum fulfillment</li>
+<li>Unique transaction ID dengan expiry timestamp untuk mencegah replay attack</li>
+</ul>
+
+<h2>8.8 E-Ticket Management</h2>
+<table>
+<tr><th>Field</th><th>Keterangan</th></tr>
+<tr><td>ticket_number</td><td>Unique, format: [EVENT_CODE]-[RANDOM_8]</td></tr>
+<tr><td>order_id</td><td>FK ke orders</td></tr>
+<tr><td>ticket_type_id</td><td>FK ke ticket_types</td></tr>
+<tr><td>holder_name</td><td>Nama pemilik tiket</td></tr>
+<tr><td>holder_email</td><td>Email pemilik tiket</td></tr>
+<tr><td>qr_code_data</td><td>Signed JWT token</td></tr>
+<tr><td>status</td><td>valid, used, cancelled, refunded, expired</td></tr>
+<tr><td>checked_in_at</td><td>Timestamp check-in</td></tr>
+<tr><td>gate_id</td><td>Gate tempat check-in</td></tr>
+</table>
+
+<h2>8.9 QR Code Check-in / Gate Validation</h2>
+<p><strong>Alur:</strong></p>
+<pre>Gate Staff buka PWA Scanner → Kamera aktif → Scan QR → 
+Validasi token → Cek status tiket → 
+Valid: check-in dicatat, tampil konfirmasi hijau
+Invalid/duplicate: alert merah</pre>
+<p><strong>Mode Offline:</strong> PWA scanner menyimpan data tiket di IndexedDB. Sinkronisasi saat online menggunakan delta sync (append-only scan logs).</p>
+
+<h2>8.10 Customer Management</h2>
+<table>
+<tr><th>Fitur</th><th>Deskripsi</th></tr>
+<tr><td>Registrasi</td><td>Email + password, verifikasi email</td></tr>
+<tr><td>Login</td><td>Email/password, remember me</td></tr>
+<tr><td>Profil</td><td>Nama, telepon, foto profil</td></tr>
+<tr><td>Riwayat Order</td><td>Daftar order dengan status</td></tr>
+<tr><td>Riwayat Tiket</td><td>Daftar e-ticket</td></tr>
+<tr><td>Preferensi</td><td>Notifikasi email, WhatsApp</td></tr>
+<tr><td>Privasi</td><td>Consent management</td></tr>
+</table>
+
+<h2>8.11 Content Management System (CMS)</h2>
+<ul>
+<li>Homepage Builder (drag-and-drop section)</li>
+<li>Banner Management</li>
+<li>FAQ Management</li>
+<li>Sponsor/Partner</li>
+<li>SEO Management</li>
+<li>Media Library</li>
+<li>Draft/Preview/Publish workflow</li>
+</ul>
+
+<h2>8.12 Playlist Management</h2>
+<ul>
+<li>Integrasi Spotify Embed atau YouTube Music</li>
+<li>Admin atur judul, deskripsi, cover, URL playlist</li>
+<li>Playlist per event atau hari</li>
+</ul>
+
+<h2>8.13 Gallery / Memories Management</h2>
+<table>
+<tr><th>Fitur</th><th>Deskripsi</th></tr>
+<tr><td>Gallery Admin</td><td>Upload foto/video event</td></tr>
+<tr><td>Share Your Memories</td><td>Pengunjung dapat upload foto</td></tr>
+<tr><td>Moderasi</td><td>Status: pending, approved, rejected</td></tr>
+<tr><td>Keamanan Upload</td><td>Validasi MIME, ukuran, scan malware</td></tr>
+<tr><td>Social Share</td><td>Tombol share ke media sosial</td></tr>
+</table>
+
+<h2>8.14 Promotion / Voucher Management</h2>
+<table>
+<tr><th>Field</th><th>Tipe</th><th>Keterangan</th></tr>
+<tr><td>code</td><td>VARCHAR(50)</td><td>Unique promo code</td></tr>
+<tr><td>type</td><td>ENUM</td><td>percentage, fixed_amount</td></tr>
+<tr><td>value</td><td>DECIMAL(12,2)</td><td>Nilai diskon</td></tr>
+<tr><td>max_uses</td><td>INTEGER</td><td>Batas total penggunaan</td></tr>
+<tr><td>max_uses_per_customer</td><td>INTEGER</td><td>Batas per customer</td></tr>
+<tr><td>valid_from</td><td>TIMESTAMPTZ</td><td>Mulai berlaku</td></tr>
+<tr><td>valid_until</td><td>TIMESTAMPTZ</td><td>Akhir berlaku</td></tr>
+<tr><td>ticket_type_ids</td><td>UUID[]</td><td>Kategori tiket</td></tr>
+<tr><td>event_id</td><td>UUID</td><td>Event terkait</td></tr>
+</table>
+
+<h2>8.15 Notification Management</h2>
+<table>
+<tr><th>Template</th><th>Trigger</th><th>Channel</th></tr>
+<tr><td>Order Confirmation</td><td>Order dibuat</td><td>Email</td></tr>
+<tr><td>Payment Success</td><td>Pembayaran terverifikasi</td><td>Email + Push</td></tr>
+<tr><td>E-Ticket Delivery</td><td>E-ticket diterbitkan</td><td>Email</td></tr>
+<tr><td>Payment Reminder</td><td>Order mendekati expired</td><td>Email + Push</td></tr>
+<tr><td>Event Reminder</td><td>H-1 event</td><td>Email + Push</td></tr>
+<tr><td>Schedule Change</td><td>Perubahan jadwal</td><td>Email + Push</td></tr>
+<tr><td>Refund Notification</td><td>Refund diproses</td><td>Email</td></tr>
+</table>
+
+<h2>8.16 Dashboard Admin dan Analytics</h2>
+<table>
+<tr><th>Widget</th><th>Data</th></tr>
+<tr><td>Total Events</td><td>Count semua event</td></tr>
+<tr><td>Active Events</td><td>Count event published/ongoing</td></tr>
+<tr><td>Total Tickets Sold</td><td>Sum sold_count</td></tr>
+<tr><td>Total Revenue</td><td>Sum total_amount paid</td></tr>
+<tr><td>Total Orders</td><td>Count orders</td></tr>
+<tr><td>Total Customers</td><td>Count customers</td></tr>
+<tr><td>Total Check-ins</td><td>Count ticket_checkins</td></tr>
+<tr><td>Sales Chart</td><td>Penjualan per hari/minggu/bulan</td></tr>
+<tr><td>Ticket Category Breakdown</td><td>Penjualan per kategori</td></tr>
+<tr><td>Payment Status</td><td>Pie chart status pembayaran</td></tr>
+<tr><td>Check-in Status</td><td>Progress bar check-in</td></tr>
+<tr><td>Remaining Tickets</td><td>Sisa kuota per kategori</td></tr>
+<tr><td>Promo Performance</td><td>Penggunaan voucher</td></tr>
+<tr><td>Refund Data</td><td>Total refund dan status</td></tr>
+</table>
+
+<h2>8.17 Reporting dan Keuangan</h2>
+<table>
+<tr><th>Laporan</th><th>Deskripsi</th><th>Akses</th></tr>
+<tr><td>Laporan Penjualan Tiket</td><td>Detail penjualan per tiket</td><td>Admin, Finance</td></tr>
+<tr><td>Laporan Transaksi Pembayaran</td><td>Semua transaksi gateway</td><td>Finance</td></tr>
+<tr><td>Laporan Pendapatan Kotor</td><td>Total revenue</td><td>Finance</td></tr>
+<tr><td>Laporan Biaya Layanan</td><td>Total service fee</td><td>Finance</td></tr>
+<tr><td>Laporan Pajak</td><td>Total tax collected</td><td>Finance</td></tr>
+<tr><td>Laporan Diskon &amp; Voucher</td><td>Penggunaan promo</td><td>Admin, Finance</td></tr>
+<tr><td>Laporan Refund</td><td>Daftar refund</td><td>Finance</td></tr>
+<tr><td>Laporan Settlement</td><td>Rekonsiliasi gateway</td><td>Finance</td></tr>
+<tr><td>Laporan Pendapatan Bersih</td><td>Revenue - refund - biaya</td><td>Finance</td></tr>
+<tr><td>Laporan Penjualan per Event</td><td>Breakdown per event</td><td>Admin</td></tr>
+<tr><td>Laporan Penjualan per Kategori</td><td>Breakdown per tiket</td><td>Admin</td></tr>
+<tr><td>Laporan Check-in</td><td>Kehadiran per gate/waktu</td><td>Admin, Gate Staff</td></tr>
+<tr><td>Laporan Performa Event</td><td>Metrik keseluruhan</td><td>Admin</td></tr>
+</table>
+<div class="note">Modul finance bersifat laporan operasional ticketing, bukan sistem akuntansi penuh.</div>
+
+<!-- ============ 9. SITEMAP ============ -->
+<div class="page-break"></div>
+<h1>9. SITEMAP</h1>
+
+<h2>9.1 Sitemap Website Publik</h2>
+<pre>/
+├── /events
+│   ├── /events (daftar event)
+│   └── /events/[slug] (detail event)
+│       ├── /events/[slug]/lineup
+│       ├── /events/[slug]/schedule
+│       ├── /events/[slug]/tickets
+│       └── /events/[slug]/venue
+├── /checkout
+│   ├── /checkout/[orderId]
+│   └── /payment/status/[orderId]
+├── /my-account
+│   ├── /my-account/profile
+│   ├── /my-account/orders
+│   └── /my-account/tickets
+├── /gallery
+├── /memories
+├── /playlist
+├── /faq
+├── /terms
+├── /privacy
+└── /contact</pre>
+
+<h2>9.2 Sitemap Dashboard Admin</h2>
+<pre>/admin
+├── /admin/dashboard
+├── /admin/events
+├── /admin/artists
+├── /admin/schedules
+├── /admin/tickets
+├── /admin/orders
+├── /admin/payments
+├── /admin/customers
+├── /admin/check-ins
+├── /admin/cms
+├── /admin/gallery
+├── /admin/playlists
+├── /admin/vouchers
+├── /admin/notifications
+├── /admin/reports
+├── /admin/finance
+├── /admin/users
+├── /admin/roles
+├── /admin/settings
+└── /admin/audit-logs</pre>
+
+<!-- ============ 10. USER FLOW ============ -->
+<h1>10. USER FLOW</h1>
+
+<h2>10.1 Alur Pembelian Tiket (Customer)</h2>
+<ol>
+<li>Buka website → Homepage event</li>
+<li>Klik "Buy Tickets"</li>
+<li>Pilih kategori tiket dan jumlah</li>
+<li>Sistem validasi kuota (row-level locking)</li>
+<li>Isi data pembeli</li>
+<li>Isi data pemilik tiket (opsional)</li>
+<li>Lihat ringkasan order</li>
+<li>Klik "Proceed to Payment"</li>
+<li>Sistem buat order (status: pending)</li>
+<li>Redirect ke payment gateway</li>
+<li>Pilih metode pembayaran</li>
+<li>Selesaikan pembayaran</li>
+<li>Payment gateway kirim webhook</li>
+<li>Sistem verifikasi webhook</li>
+<li>Update order → paid</li>
+<li>Generate e-ticket (QR Code)</li>
+<li>Kirim email e-ticket</li>
+<li>Halaman "Payment Success"</li>
+<li>Download e-ticket</li>
+</ol>
+
+<h2>10.2 Alur Check-in di Venue</h2>
+<ol>
+<li>Gate Staff buka PWA Scanner</li>
+<li>Login dengan akun gate staff</li>
+<li>Pilih event aktif</li>
+<li>Kamera aktif → scan QR pengunjung</li>
+<li>Sistem verifikasi token QR (offline/online)</li>
+<li>Cek status tiket:
+  <ul>
+    <li>Valid → hijau, catat check-in</li>
+    <li>Already used → kuning</li>
+    <li>Invalid → merah</li>
+  </ul>
+</li>
+<li>Offline: check-in dicatat lokal (IndexedDB)</li>
+<li>Online: log disinkronkan ke server</li>
+</ol>
+
+<h2>10.3 Alur Admin Membuat Event</h2>
+<ol>
+<li>Admin login dashboard</li>
+<li>Menu "Events" → "Create Event"</li>
+<li>Isi form event (nama, slug, deskripsi, tanggal, venue)</li>
+<li>Upload banner dan poster</li>
+<li>Atur status event (draft)</li>
+<li>Tambah artis ke lineup</li>
+<li>Atur jadwal pertunjukan</li>
+<li>Buat kategori tiket (nama, harga, kuota, periode)</li>
+<li>Preview event</li>
+<li>Publish event</li>
+</ol>
+
+<!-- ============ 11. ARSITEKTUR ============ -->
+<div class="page-break"></div>
+<h1>11. ARSITEKTUR SISTEM</h1>
+
+<h2>11.1 Jenis Arsitektur: Modular Monolith</h2>
+<p><strong>Rekomendasi:</strong> Modular Monolith untuk tahap awal dengan pemisahan domain yang jelas.</p>
+<p><strong>Alasan Pemilihan:</strong></p>
+<ul>
+<li>Tim kecil-menengah dapat mengelola satu codebase</li>
+<li>Deployment lebih sederhana (satu aplikasi, satu database)</li>
+<li>Domain boundaries jelas memudahkan migrasi ke microservices</li>
+<li>Menghindari kompleksitas operasional microservices pada tahap awal</li>
+</ul>
+
+<p><strong>Domain Modules:</strong></p>
+<table>
+<tr><th>Module</th><th>Tanggung Jawab</th></tr>
+<tr><td>Identity</td><td>Auth, user, role, permission</td></tr>
+<tr><td>Event</td><td>Event, venue, stage, schedule</td></tr>
+<tr><td>Artist</td><td>Artist, lineup</td></tr>
+<tr><td>Ticketing</td><td>Ticket type, inventory, pricing</td></tr>
+<tr><td>Order</td><td>Checkout, order management</td></tr>
+<tr><td>Payment</td><td>Payment gateway integration</td></tr>
+<tr><td>Ticket</td><td>E-ticket generation, QR Code</td></tr>
+<tr><td>Check-in</td><td>QR validation, gate management</td></tr>
+<tr><td>CMS</td><td>Content, gallery, playlist, FAQ</td></tr>
+<tr><td>Notification</td><td>Email, push notification</td></tr>
+<tr><td>Report</td><td>Analytics, reporting</td></tr>
+</table>
+
+<h2>11.2 Layer Arsitektur</h2>
+<pre>[PRESENTATION LAYER]
+  Next.js (Public + Admin) — PWA
+  React, Tailwind CSS, shadcn/ui
+                    |
+                    v
+[APPLICATION LAYER]
+  NestJS Controllers, Guards, DTOs
+  REST API, Validation
+                    |
+                    v
+[DOMAIN / BUSINESS LOGIC LAYER]
+  Services, Use Cases, Domain Entities
+  Business Rules, Transaction Management
+                    |
+                    v
+[INFRASTRUCTURE LAYER]
+  Prisma ORM, PostgreSQL, Redis, S3,
+  Email Service, Payment Gateway, QR Code
+                    |
+                    v
+[DATA ACCESS LAYER]
+  Prisma Client, Repositories</pre>
+
+<h2>11.3 Komponen Sistem</h2>
+<table>
+<tr><th>Komponen</th><th>Teknologi</th><th>Fungsi</th></tr>
+<tr><td>Frontend</td><td>Next.js 14+, React 18, TypeScript</td><td>Public + Admin (PWA)</td></tr>
+<tr><td>Backend API</td><td>NestJS, TypeScript</td><td>REST API, business logic</td></tr>
+<tr><td>Database</td><td>PostgreSQL 16</td><td>Data persistence, ACID</td></tr>
+<tr><td>Cache</td><td>Redis</td><td>Session, rate limiting, queue</td></tr>
+<tr><td>Object Storage</td><td>Cloudflare R2 / AWS S3</td><td>Gambar, poster, PDF</td></tr>
+<tr><td>Payment Gateway</td><td>Midtrans / Xendit</td><td>Pemrosesan pembayaran</td></tr>
+<tr><td>Email Service</td><td>Resend / SendGrid</td><td>Notifikasi email</td></tr>
+<tr><td>QR Code Service</td><td>qrcode npm + JWT</td><td>Generate &amp; verify QR</td></tr>
+<tr><td>Auth Service</td><td>JWT + Refresh Token</td><td>Authentication</td></tr>
+<tr><td>Monitoring</td><td>Sentry, Grafana</td><td>Error tracking, metrics</td></tr>
+<tr><td>Logging</td><td>Winston / Pino</td><td>Structured logging</td></tr>
+</table>
+
+<h2>11.4 Strategi Scalability, Availability, Backup, DR</h2>
+<table>
+<tr><th>Aspek</th><th>Strategi</th></tr>
+<tr><td>Scalability</td><td>Horizontal scaling NestJS API; Redis untuk cache; CDN untuk static assets</td></tr>
+<tr><td>Availability</td><td>Load balancer; health checks; auto-restart container</td></tr>
+<tr><td>Database</td><td>PostgreSQL streaming replication; read replica untuk reporting</td></tr>
+<tr><td>Backup</td><td>Daily automated backup (pg_dump) ke object storage; WAL archiving</td></tr>
+<tr><td>DR</td><td>RPO: 1 jam; RTO: 4 jam; backup lintas region</td></tr>
+<tr><td>Cache</td><td>Redis dengan persistence (RDB + AOF)</td></tr>
+<tr><td>Job Queue</td><td>BullMQ (Redis-based) untuk background jobs</td></tr>
+</table>
+
+<!-- ============ 12. TECH STACK ============ -->
+<div class="page-break"></div>
+<h1>12. REKOMENDASI TECH STACK</h1>
+
+<h2>12.1 Stack Utama</h2>
+<table>
+<tr><th>Teknologi</th><th>Fungsi</th><th>Alasan</th><th>Alternatif</th></tr>
+<tr><td>Next.js 14+</td><td>Frontend</td><td>SSR/SSG, SEO, PWA</td><td>Remix, Nuxt</td></tr>
+<tr><td>React 18</td><td>UI</td><td>Ekosistem besar</td><td>Vue, Svelte</td></tr>
+<tr><td>TypeScript</td><td>Bahasa</td><td>Type safety</td><td>JavaScript</td></tr>
+<tr><td>Tailwind CSS</td><td>Styling</td><td>Utility-first</td><td>CSS Modules</td></tr>
+<tr><td>shadcn/ui</td><td>Komponen</td><td>Accessible</td><td>Chakra, MUI</td></tr>
+<tr><td>NestJS</td><td>Backend</td><td>Modular, TS-first</td><td>Express, Fastify</td></tr>
+<tr><td>PostgreSQL 16</td><td>Database</td><td>ACID, JSONB, RLS</td><td>MySQL</td></tr>
+<tr><td>Prisma ORM</td><td>ORM</td><td>Type-safe, migrations</td><td>TypeORM</td></tr>
+<tr><td>Redis</td><td>Cache/queue</td><td>Performa, BullMQ</td><td>Memcached</td></tr>
+<tr><td>Zod</td><td>Validasi</td><td>Type inference</td><td>Joi</td></tr>
+<tr><td>React Hook Form</td><td>Form</td><td>Performa</td><td>Formik</td></tr>
+<tr><td>TanStack Query</td><td>Data fetching</td><td>Caching</td><td>SWR</td></tr>
+<tr><td>Midtrans/Xendit</td><td>Payment</td><td>Indonesia, resmi</td><td>Doku, Faspay</td></tr>
+<tr><td>Resend/SendGrid</td><td>Email</td><td>Deliverability</td><td>Mailgun</td></tr>
+<tr><td>Cloudflare R2</td><td>Storage</td><td>S3-compatible</td><td>AWS S3</td></tr>
+<tr><td>Docker</td><td>Container</td><td>Konsistensi</td><td>Podman</td></tr>
+<tr><td>GitHub Actions</td><td>CI/CD</td><td>Integrasi</td><td>GitLab CI</td></tr>
+<tr><td>Sentry</td><td>Error tracking</td><td>Real-time</td><td>Bugsnag</td></tr>
+<tr><td>Workbox</td><td>Service worker</td><td>Caching strategies</td><td>Custom SW</td></tr>
+</table>
+
+<h2>12.2 PWA Implementation</h2>
+<table>
+<tr><th>Fitur PWA</th><th>Implementasi</th></tr>
+<tr><td>Web App Manifest</td><td>manifest.json dengan nama, ikon, warna tema</td></tr>
+<tr><td>Service Worker</td><td>Workbox: CacheFirst static, NetworkFirst API/HTML</td></tr>
+<tr><td>Install Prompt</td><td>beforeinstallprompt event ditangkap</td></tr>
+<tr><td>Offline Fallback</td><td>Halaman /offline untuk navigasi offline</td></tr>
+<tr><td>Background Sync</td><td>Sinkronisasi check-in log</td></tr>
+<tr><td>Push Notification</td><td>Web Push API untuk reminder</td></tr>
+</table>
+
+<h2>12.3 Batasan Offline</h2>
+<div class="note">
+Pembayaran <strong>tidak dapat diproses sepenuhnya offline</strong>. Payment gateway memerlukan koneksi ke server. PWA hanya menampilkan halaman pembayaran yang di-cache. Validasi tiket menggunakan cache lokal; risiko duplikasi diminimalkan dengan append-only scan logs dan delta sync.
+</div>
+
+<!-- ============ 13. DATABASE DESIGN ============ -->
+<div class="page-break"></div>
+<h1>13. DATABASE DESIGN</h1>
+<p>Database terdiri dari 29 tabel utama. Berikut spesifikasi lengkap setiap tabel:</p>
+
+<h2>13.1 users</h2>
+<table>
+<tr><th>Kolom</th><th>Tipe</th><th>Nullable</th><th>Keterangan</th></tr>
+<tr><td>id</td><td>UUID</td><td>No</td><td>PK, gen_random_uuid()</td></tr>
+<tr><td>email</td><td>VARCHAR(255)</td><td>No</td><td>Unique</td></tr>
+<tr><td>password_hash</td><td>VARCHAR(255)</td><td>No</td><td>bcrypt</td></tr>
+<tr><td>name</td><td>VARCHAR(255)</td><td>No</td><td>-</td></tr>
+<tr><td>phone</td><td>VARCHAR(20)</td><td>Yes</td><td>-</td></tr>
+<tr><td>email_verified_at</td><td>TIMESTAMPTZ</td><td>Yes</td><td>-</td></tr>
+<tr><td>is_active</td><td>BOOLEAN</td><td>No</td><td>Default true</td></tr>
+<tr><td>created_at</td><td>TIMESTAMPTZ</td><td>No</td><td>now()</td></tr>
+<tr><td>updated_at</td><td>TIMESTAMPTZ</td><td>No</td><td>now()</td></tr>
+<tr><td>deleted_at</td><td>TIMESTAMPTZ</td><td>Yes</td><td>Soft delete</td></tr>
+</table>
+
+<h2>13.2 roles</h2>
+<table>
+<tr><th>Kolom</th><th>Tipe</th><th>Keterangan</th></tr>
+<tr><td>id</td><td>UUID</td><td>PK</td></tr>
+<tr><td>name</td><td>VARCHAR(50)</td><td>Unique</td></tr>
+<tr><td>description</td><td>TEXT</td><td>-</td></tr>
+</table>
+
+<h2>13.3 permissions</h2>
+<table>
+<tr><th>Kolom</th><th>Tipe</th><th>Keterangan</th></tr>
+<tr><td>id</td><td>UUID</td><td>PK</td></tr>
+<tr><td>name</td><td>VARCHAR(100)</td><td>Unique</td></tr>
+<tr><td>module</td><td>VARCHAR(50)</td><td>-</td></tr>
+</table>
+
+<h2>13.4 user_roles</h2>
+<table>
+<tr><th>Kolom</th><th>Tipe</th><th>Keterangan</th></tr>
+<tr><td>user_id</td><td>UUID</td><td>FK users, PK</td></tr>
+<tr><td>role_id</td><td>UUID</td><td>FK roles, PK</td></tr>
+</table>
+
+<h2>13.5 role_permissions</h2>
+<table>
+<tr><th>Kolom</th><th>Tipe</th><th>Keterangan</th></tr>
+<tr><td>role_id</td><td>UUID</td><td>FK roles, PK</td></tr>
+<tr><td>permission_id</td><td>UUID</td><td>FK permissions, PK</td></tr>
+</table>
+
+<h2>13.6 venues</h2>
+<table>
+<tr><th>Kolom</th><th>Tipe</th><th>Keterangan</th></tr>
+<tr><td>id</td><td>UUID</td><td>PK</td></tr>
+<tr><td>name</td><td>VARCHAR(255)</td><td>-</td></tr>
+<tr><td>address</td><td>TEXT</td><td>-</td></tr>
+<tr><td>city</td><td>VARCHAR(100)</td><td>-</td></tr>
+<tr><td>latitude</td><td>DECIMAL(10,8)</td><td>-</td></tr>
+<tr><td>longitude</td><td>DECIMAL(11,8)</td><td>-</td></tr>
+<tr><td>capacity</td><td>INTEGER</td><td>-</td></tr>
+</table>
+
+<h2>13.7 events</h2>
+<table>
+<tr><th>Kolom</th><th>Tipe</th><th>Keterangan</th></tr>
+<tr><td>id</td><td>UUID</td><td>PK</td></tr>
+<tr><td>name</td><td>VARCHAR(255)</td><td>-</td></tr>
+<tr><td>slug</td><td>VARCHAR(255)</td><td>Unique</td></tr>
+<tr><td>description</td><td>TEXT</td><td>-</td></tr>
+<tr><td>banner_url</td><td>VARCHAR(500)</td><td>-</td></tr>
+<tr><td>poster_url</td><td>VARCHAR(500)</td><td>-</td></tr>
+<tr><td>start_date</td><td>TIMESTAMPTZ</td><td>-</td></tr>
+<tr><td>end_date</td><td>TIMESTAMPTZ</td><td>-</td></tr>
+<tr><td>venue_id</td><td>UUID</td><td>FK venues</td></tr>
+<tr><td>organizer_id</td><td>UUID</td><td>FK users</td></tr>
+<tr><td>status</td><td>VARCHAR(20)</td><td>draft/published/...</td></tr>
+<tr><td>terms_conditions</td><td>TEXT</td><td>-</td></tr>
+<tr><td>refund_policy</td><td>TEXT</td><td>-</td></tr>
+<tr><td>seo_title</td><td>VARCHAR(255)</td><td>-</td></tr>
+<tr><td>seo_description</td><td>VARCHAR(500)</td><td>-</td></tr>
+<tr><td>created_at</td><td>TIMESTAMPTZ</td><td>-</td></tr>
+<tr><td>updated_at</td><td>TIMESTAMPTZ</td><td>-</td></tr>
+<tr><td>deleted_at</td><td>TIMESTAMPTZ</td><td>Soft delete</td></tr>
+</table>
+
+<h2>13.8 event_stages</h2>
+<table>
+<tr><th>Kolom</th><th>Tipe</th><th>Keterangan</th></tr>
+<tr><td>id</td><td>UUID</td><td>PK</td></tr>
+<tr><td>event_id</td><td>UUID</td><td>FK events</td></tr>
+<tr><td>name</td><td>VARCHAR(100)</td><td>-</td></tr>
+<tr><td>capacity</td><td>INTEGER</td><td>-</td></tr>
+</table>
+
+<h2>13.9 artists</h2>
+<table>
+<tr><th>Kolom</th><th>Tipe</th><th>Keterangan</th></tr>
+<tr><td>id</td><td>UUID</td><td>PK</td></tr>
+<tr><td>name</td><td>VARCHAR(255)</td><td>-</td></tr>
+<tr><td>bio</td><td>TEXT</td><td>-</td></tr>
+<tr><td>genre</td><td>VARCHAR(100)</td><td>-</td></tr>
+<tr><td>photo_url</td><td>VARCHAR(500)</td><td>-</td></tr>
+<tr><td>social_media</td><td>JSONB</td><td>-</td></tr>
+<tr><td>music_links</td><td>JSONB</td><td>-</td></tr>
+</table>
+
+<h2>13.10 event_artists (Junction Table)</h2>
+<table>
+<tr><th>Kolom</th><th>Tipe</th><th>Keterangan</th></tr>
+<tr><td>event_id</td><td>UUID</td><td>FK events, PK</td></tr>
+<tr><td>artist_id</td><td>UUID</td><td>FK artists, PK</td></tr>
+<tr><td>is_headliner</td><td>BOOLEAN</td><td>Default false</td></tr>
+<tr><td>display_order</td><td>INTEGER</td><td>-</td></tr>
+</table>
+
+<h2>13.11 schedules</h2>
+<table>
+<tr><th>Kolom</th><th>Tipe</th><th>Keterangan</th></tr>
+<tr><td>id</td><td>UUID</td><td>PK</td></tr>
+<tr><td>event_id</td><td>UUID</td><td>FK events</td></tr>
+<tr><td>stage_id</td><td>UUID</td><td>FK event_stages</td></tr>
+<tr><td>artist_id</td><td>UUID</td><td>FK artists</td></tr>
+<tr><td>day</td><td>INTEGER</td><td>-</td></tr>
+<tr><td>start_time</td><td>TIMESTAMPTZ</td><td>-</td></tr>
+<tr><td>end_time</td><td>TIMESTAMPTZ</td><td>-</td></tr>
+<tr><td>duration_minutes</td><td>INTEGER</td><td>-</td></tr>
+<tr><td>status</td><td>VARCHAR(20)</td><td>scheduled/ongoing/...</td></tr>
+</table>
+
+<h2>13.12 ticket_types</h2>
+<table>
+<tr><th>Kolom</th><th>Tipe</th><th>Keterangan</th></tr>
+<tr><td>id</td><td>UUID</td><td>PK</td></tr>
+<tr><td>event_id</td><td>UUID</td><td>FK events</td></tr>
+<tr><td>name</td><td>VARCHAR(100)</td><td>Early Bird/Regular/VIP</td></tr>
+<tr><td>description</td><td>TEXT</td><td>-</td></tr>
+<tr><td>price</td><td>DECIMAL(12,2)</td><td>-</td></tr>
+<tr><td>quota</td><td>INTEGER</td><td>-</td></tr>
+<tr><td>sold_count</td><td>INTEGER</td><td>Default 0</td></tr>
+<tr><td>sale_start</td><td>TIMESTAMPTZ</td><td>-</td></tr>
+<tr><td>sale_end</td><td>TIMESTAMPTZ</td><td>-</td></tr>
+<tr><td>max_per_customer</td><td>INTEGER</td><td>NULL = unlimited</td></tr>
+<tr><td>access_type</td><td>VARCHAR(50)</td><td>daily/weekend/full_pass</td></tr>
+<tr><td>status</td><td>VARCHAR(20)</td><td>available/sold_out/closed</td></tr>
+<tr><td>service_fee</td><td>DECIMAL(12,2)</td><td>Default 0</td></tr>
+<tr><td>tax_rate</td><td>DECIMAL(5,2)</td><td>Default 0</td></tr>
+<tr><td>created_at</td><td>TIMESTAMPTZ</td><td>-</td></tr>
+<tr><td>updated_at</td><td>TIMESTAMPTZ</td><td>-</td></tr>
+</table>
+<p><strong>Constraint:</strong> CHECK (sold_count &lt;= quota), CHECK (price &gt;= 0), CHECK (quota &gt; 0)</p>
+
+<h2>13.13 orders</h2>
+<table>
+<tr><th>Kolom</th><th>Tipe</th><th>Keterangan</th></tr>
+<tr><td>id</td><td>UUID</td><td>PK</td></tr>
+<tr><td>order_code</td><td>VARCHAR(50)</td><td>Unique</td></tr>
+<tr><td>customer_id</td><td>UUID</td><td>FK users</td></tr>
+<tr><td>event_id</td><td>UUID</td><td>FK events</td></tr>
+<tr><td>status</td><td>VARCHAR(20)</td><td>pending/paid/expired/...</td></tr>
+<tr><td>subtotal</td><td>DECIMAL(12,2)</td><td>-</td></tr>
+<tr><td>service_fee</td><td>DECIMAL(12,2)</td><td>-</td></tr>
+<tr><td>tax_amount</td><td>DECIMAL(12,2)</td><td>-</td></tr>
+<tr><td>discount_amount</td><td>DECIMAL(12,2)</td><td>-</td></tr>
+<tr><td>total_amount</td><td>DECIMAL(12,2)</td><td>-</td></tr>
+<tr><td>payment_deadline</td><td>TIMESTAMPTZ</td><td>-</td></tr>
+<tr><td>paid_at</td><td>TIMESTAMPTZ</td><td>-</td></tr>
+<tr><td>created_at</td><td>TIMESTAMPTZ</td><td>-</td></tr>
+<tr><td>updated_at</td><td>TIMESTAMPTZ</td><td>-</td></tr>
+</table>
+
+<h2>13.14 order_items</h2>
+<table>
+<tr><th>Kolom</th><th>Tipe</th><th>Keterangan</th></tr>
+<tr><td>id</td><td>UUID</td><td>PK</td></tr>
+<tr><td>order_id</td><td>UUID</td><td>FK orders</td></tr>
+<tr><td>ticket_type_id</td><td>UUID</td><td>FK ticket_types</td></tr>
+<tr><td>quantity</td><td>INTEGER</td><td>-</td></tr>
+<tr><td>unit_price</td><td>DECIMAL(12,2)</td><td>-</td></tr>
+<tr><td>total_price</td><td>DECIMAL(12,2)</td><td>-</td></tr>
+</table>
+
+<h2>13.15 payments</h2>
+<table>
+<tr><th>Kolom</th><th>Tipe</th><th>Keterangan</th></tr>
+<tr><td>id</td><td>UUID</td><td>PK</td></tr>
+<tr><td>order_id</td><td>UUID</td><td>FK orders</td></tr>
+<tr><td>gateway</td><td>VARCHAR(50)</td><td>midtrans/xendit</td></tr>
+<tr><td>gateway_transaction_id</td><td>VARCHAR(255)</td><td>-</td></tr>
+<tr><td>gateway_reference</td><td>VARCHAR(255)</td><td>-</td></tr>
+<tr><td>method</td><td>VARCHAR(50)</td><td>va/qris/ewallet/card</td></tr>
+<tr><td>amount</td><td>DECIMAL(12,2)</td><td>-</td></tr>
+<tr><td>status</td><td>VARCHAR(20)</td><td>pending/success/failed/expired</td></tr>
+<tr><td>raw_response</td><td>JSONB</td><td>-</td></tr>
+<tr><td>idempotency_key</td><td>VARCHAR(255)</td><td>Unique</td></tr>
+<tr><td>paid_at</td><td>TIMESTAMPTZ</td><td>-</td></tr>
+<tr><td>created_at</td><td>TIMESTAMPTZ</td><td>-</td></tr>
+<tr><td>updated_at</td><td>TIMESTAMPTZ</td><td>-</td></tr>
+</table>
+
+<h2>13.16 tickets</h2>
+<table>
+<tr><th>Kolom</th><th>Tipe</th><th>Keterangan</th></tr>
+<tr><td>id</td><td>UUID</td><td>PK</td></tr>
+<tr><td>ticket_number</td><td>VARCHAR(50)</td><td>Unique</td></tr>
+<tr><td>order_id</td><td>UUID</td><td>FK orders</td></tr>
+<tr><td>ticket_type_id</td><td>UUID</td><td>FK ticket_types</td></tr>
+<tr><td>event_id</td><td>UUID</td><td>FK events</td></tr>
+<tr><td>holder_name</td><td>VARCHAR(255)</td><td>-</td></tr>
+<tr><td>holder_email</td><td>VARCHAR(255)</td><td>-</td></tr>
+<tr><td>qr_code_data</td><td>TEXT</td><td>Signed JWT</td></tr>
+<tr><td>status</td><td>VARCHAR(20)</td><td>valid/used/cancelled/refunded/expired</td></tr>
+<tr><td>checked_in_at</td><td>TIMESTAMPTZ</td><td>-</td></tr>
+<tr><td>checked_in_gate</td><td>VARCHAR(100)</td><td>-</td></tr>
+<tr><td>checked_in_by</td><td>UUID</td><td>FK users</td></tr>
+<tr><td>created_at</td><td>TIMESTAMPTZ</td><td>-</td></tr>
+<tr><td>updated_at</td><td>TIMESTAMPTZ</td><td>-</td></tr>
+</table>
+
+<h2>13.17 ticket_checkins</h2>
+<table>
+<tr><th>Kolom</th><th>Tipe</th><th>Keterangan</th></tr>
+<tr><td>id</td><td>UUID</td><td>PK</td></tr>
+<tr><td>ticket_id</td><td>UUID</td><td>FK tickets</td></tr>
+<tr><td>gate_id</td><td>VARCHAR(100)</td><td>-</td></tr>
+<tr><td>staff_id</td><td>UUID</td><td>FK users</td></tr>
+<tr><td>scanned_at</td><td>TIMESTAMPTZ</td><td>-</td></tr>
+<tr><td>is_offline</td><td>BOOLEAN</td><td>Default false</td></tr>
+<tr><td>synced_at</td><td>TIMESTAMPTZ</td><td>-</td></tr>
+<tr><td>device_id</td><td>VARCHAR(100)</td><td>-</td></tr>
+</table>
+
+<h2>13.18 promo_codes</h2>
+<table>
+<tr><th>Kolom</th><th>Tipe</th><th>Keterangan</th></tr>
+<tr><td>id</td><td>UUID</td><td>PK</td></tr>
+<tr><td>code</td><td>VARCHAR(50)</td><td>Unique</td></tr>
+<tr><td>type</td><td>VARCHAR(20)</td><td>percentage/fixed_amount</td></tr>
+<tr><td>value</td><td>DECIMAL(12,2)</td><td>-</td></tr>
+<tr><td>max_uses</td><td>INTEGER</td><td>NULL = unlimited</td></tr>
+<tr><td>max_uses_per_customer</td><td>INTEGER</td><td>-</td></tr>
+<tr><td>valid_from</td><td>TIMESTAMPTZ</td><td>-</td></tr>
+<tr><td>valid_until</td><td>TIMESTAMPTZ</td><td>-</td></tr>
+<tr><td>event_id</td><td>UUID</td><td>FK events</td></tr>
+<tr><td>ticket_type_ids</td><td>UUID[]</td><td>-</td></tr>
+<tr><td>used_count</td><td>INTEGER</td><td>Default 0</td></tr>
+<tr><td>is_active</td><td>BOOLEAN</td><td>Default true</td></tr>
+</table>
+
+<h2>13.19 promo_usages</h2>
+<table>
+<tr><th>Kolom</th><th>Tipe</th><th>Keterangan</th></tr>
+<tr><td>id</td><td>UUID</td><td>PK</td></tr>
+<tr><td>promo_code_id</td><td>UUID</td><td>FK promo_codes</td></tr>
+<tr><td>customer_id</td><td>UUID</td><td>FK users</td></tr>
+<tr><td>order_id</td><td>UUID</td><td>FK orders</td></tr>
+<tr><td>discount_amount</td><td>DECIMAL(12,2)</td><td>-</td></tr>
+<tr><td>used_at</td><td>TIMESTAMPTZ</td><td>-</td></tr>
+</table>
+
+<h2>13.20 refunds</h2>
+<table>
+<tr><th>Kolom</th><th>Tipe</th><th>Keterangan</th></tr>
+<tr><td>id</td><td>UUID</td><td>PK</td></tr>
+<tr><td>order_id</td><td>UUID</td><td>FK orders</td></tr>
+<tr><td>amount</td><td>DECIMAL(12,2)</td><td>-</td></tr>
+<tr><td>reason</td><td>TEXT</td><td>-</td></tr>
+<tr><td>status</td><td>VARCHAR(20)</td><td>requested/approved/processed/rejected</td></tr>
+<tr><td>processed_by</td><td>UUID</td><td>FK users</td></tr>
+<tr><td>processed_at</td><td>TIMESTAMPTZ</td><td>-</td></tr>
+<tr><td>created_at</td><td>TIMESTAMPTZ</td><td>-</td></tr>
+</table>
+
+<h2>13.21 galleries</h2>
+<table>
+<tr><th>Kolom</th><th>Tipe</th></tr>
+<tr><td>id</td><td>UUID PK</td></tr>
+<tr><td>event_id</td><td>UUID FK</td></tr>
+<tr><td>title</td><td>VARCHAR(255)</td></tr>
+<tr><td>cover_url</td><td>VARCHAR(500)</td></tr>
+<tr><td>created_at</td><td>TIMESTAMPTZ</td></tr>
+</table>
+
+<h2>13.22 gallery_items</h2>
+<table>
+<tr><th>Kolom</th><th>Tipe</th></tr>
+<tr><td>id</td><td>UUID PK</td></tr>
+<tr><td>gallery_id</td><td>UUID FK</td></tr>
+<tr><td>media_url</td><td>VARCHAR(500)</td></tr>
+<tr><td>media_type</td><td>VARCHAR(20)</td></tr>
+<tr><td>caption</td><td>TEXT</td></tr>
+<tr><td>display_order</td><td>INTEGER</td></tr>
+</table>
+
+<h2>13.23 memories_submissions</h2>
+<table>
+<tr><th>Kolom</th><th>Tipe</th></tr>
+<tr><td>id</td><td>UUID PK</td></tr>
+<tr><td>event_id</td><td>UUID FK</td></tr>
+<tr><td>customer_id</td><td>UUID FK</td></tr>
+<tr><td>media_url</td><td>VARCHAR(500)</td></tr>
+<tr><td>caption</td><td>TEXT</td></tr>
+<tr><td>status</td><td>VARCHAR(20)</td></tr>
+<tr><td>moderated_by</td><td>UUID FK</td></tr>
+<tr><td>created_at</td><td>TIMESTAMPTZ</td></tr>
+</table>
+
+<h2>13.24 playlists</h2>
+<table>
+<tr><th>Kolom</th><th>Tipe</th></tr>
+<tr><td>id</td><td>UUID PK</td></tr>
+<tr><td>event_id</td><td>UUID FK</td></tr>
+<tr><td>title</td><td>VARCHAR(255)</td></tr>
+<tr><td>description</td><td>TEXT</td></tr>
+<tr><td>cover_url</td><td>VARCHAR(500)</td></tr>
+<tr><td>platform</td><td>VARCHAR(50)</td></tr>
+<tr><td>url</td><td>VARCHAR(500)</td></tr>
+<tr><td>display_order</td><td>INTEGER</td></tr>
+</table>
+
+<h2>13.25 notifications</h2>
+<table>
+<tr><th>Kolom</th><th>Tipe</th></tr>
+<tr><td>id</td><td>UUID PK</td></tr>
+<tr><td>user_id</td><td>UUID FK</td></tr>
+<tr><td>type</td><td>VARCHAR(50)</td></tr>
+<tr><td>title</td><td>VARCHAR(255)</td></tr>
+<tr><td>body</td><td>TEXT</td></tr>
+<tr><td>channel</td><td>VARCHAR(20)</td></tr>
+<tr><td>status</td><td>VARCHAR(20)</td></tr>
+<tr><td>sent_at</td><td>TIMESTAMPTZ</td></tr>
+<tr><td>created_at</td><td>TIMESTAMPTZ</td></tr>
+</table>
+
+<h2>13.26 notification_templates</h2>
+<table>
+<tr><th>Kolom</th><th>Tipe</th></tr>
+<tr><td>id</td><td>UUID PK</td></tr>
+<tr><td>code</td><td>VARCHAR(50) UNIQUE</td></tr>
+<tr><td>subject</td><td>VARCHAR(255)</td></tr>
+<tr><td>body_html</td><td>TEXT</td></tr>
+<tr><td>variables</td><td>JSONB</td></tr>
+</table>
+
+<h2>13.27 media_assets</h2>
+<table>
+<tr><th>Kolom</th><th>Tipe</th></tr>
+<tr><td>id</td><td>UUID PK</td></tr>
+<tr><td>filename</td><td>VARCHAR(255)</td></tr>
+<tr><td>original_name</td><td>VARCHAR(255)</td></tr>
+<tr><td>mime_type</td><td>VARCHAR(100)</td></tr>
+<tr><td>size_bytes</td><td>INTEGER</td></tr>
+<tr><td>url</td><td>VARCHAR(500)</td></tr>
+<tr><td>uploaded_by</td><td>UUID FK</td></tr>
+<tr><td>created_at</td><td>TIMESTAMPTZ</td></tr>
+</table>
+
+<h2>13.28 audit_logs</h2>
+<table>
+<tr><th>Kolom</th><th>Tipe</th></tr>
+<tr><td>id</td><td>UUID PK</td></tr>
+<tr><td>user_id</td><td>UUID FK</td></tr>
+<tr><td>action</td><td>VARCHAR(100)</td></tr>
+<tr><td>entity_type</td><td>VARCHAR(100)</td></tr>
+<tr><td>entity_id</td><td>UUID</td></tr>
+<tr><td>old_values</td><td>JSONB</td></tr>
+<tr><td>new_values</td><td>JSONB</td></tr>
+<tr><td>ip_address</td><td>VARCHAR(45)</td></tr>
+<tr><td>user_agent</td><td>TEXT</td></tr>
+<tr><td>created_at</td><td>TIMESTAMPTZ</td></tr>
+</table>
+
+<h2>13.29 settings</h2>
+<table>
+<tr><th>Kolom</th><th>Tipe</th></tr>
+<tr><td>key</td><td>VARCHAR(100) PK</td></tr>
+<tr><td>value</td><td>JSONB</td></tr>
+<tr><td>description</td><td>TEXT</td></tr>
+<tr><td>updated_at</td><td>TIMESTAMPTZ</td></tr>
+</table>
+
+<!-- ============ 14. ERD ============ -->
+<div class="page-break"></div>
+<h1>14. ERD (ENTITY RELATIONSHIP DIAGRAM)</h1>
+<p>Diagram ERD menggunakan notasi Crow's Foot. Untuk visualisasi, gunakan kode Mermaid di bawah pada https://mermaid.live:</p>
+<pre>erDiagram
+    users ||--o{ user_roles : has
+    roles ||--o{ user_roles : assigned
+    roles ||--o{ role_permissions : has
+    permissions ||--o{ role_permissions : granted
+    users ||--o{ events : organizes
+    venues ||--o{ events : hosts
+    events ||--o{ ticket_types : offers
+    users ||--o{ orders : places
+    events ||--o{ orders : for
+    orders ||--o{ order_items : contains
+    orders ||--o{ payments : paid_via
+    orders ||--o{ tickets : generates
+    tickets ||--o{ ticket_checkins : checked_in
+    users ||--o{ promo_usages : uses
+    orders ||--o{ refunds : refunded</pre>
+<p><strong>Relasi Utama:</strong></p>
+<table>
+<tr><th>Relasi</th><th>Kardinalitas</th><th>Keterangan</th></tr>
+<tr><td>Users → Events</td><td>1:N</td><td>Satu organizer dapat membuat banyak event</td></tr>
+<tr><td>Events → TicketTypes</td><td>1:N</td><td>Satu event memiliki banyak kategori tiket</td></tr>
+<tr><td>Events → Artists</td><td>M:N</td><td>Melalui event_artists</td></tr>
+<tr><td>Orders → OrderItems</td><td>1:N</td><td>Satu order memiliki banyak item</td></tr>
+<tr><td>Orders → Tickets</td><td>1:N</td><td>Satu order menghasilkan banyak tiket</td></tr>
+<tr><td>Tickets → Checkins</td><td>1:N</td><td>Satu tiket dapat memiliki banyak log check-in</td></tr>
+</table>
+
+<!-- ============ 15. API SPECIFICATION ============ -->
+<div class="page-break"></div>
+<h1>15. API SPECIFICATION</h1>
+
+<h2>15.1 Authentication API</h2>
+<table>
+<tr><th>Method</th><th>Endpoint</th><th>Role</th><th>Deskripsi</th></tr>
+<tr><td>POST</td><td>/api/v1/auth/register</td><td>Public</td><td>Registrasi</td></tr>
+<tr><td>POST</td><td>/api/v1/auth/login</td><td>Public</td><td>Login</td></tr>
+<tr><td>POST</td><td>/api/v1/auth/refresh</td><td>Auth</td><td>Refresh token</td></tr>
+<tr><td>POST</td><td>/api/v1/auth/logout</td><td>Auth</td><td>Logout</td></tr>
+<tr><td>POST</td><td>/api/v1/auth/forgot-password</td><td>Public</td><td>Reset password</td></tr>
+<tr><td>POST</td><td>/api/v1/auth/reset-password</td><td>Public</td><td>Reset</td></tr>
+<tr><td>POST</td><td>/api/v1/auth/verify-email</td><td>Public</td><td>Verifikasi</td></tr>
+</table>
+
+<h2>15.2 Public Event API</h2>
+<table>
+<tr><th>Method</th><th>Endpoint</th><th>Role</th></tr>
+<tr><td>GET</td><td>/api/v1/events</td><td>Public</td></tr>
+<tr><td>GET</td><td>/api/v1/events/:slug</td><td>Public</td></tr>
+<tr><td>GET</td><td>/api/v1/events/:slug/lineup</td><td>Public</td></tr>
+<tr><td>GET</td><td>/api/v1/events/:slug/schedule</td><td>Public</td></tr>
+<tr><td>GET</td><td>/api/v1/events/:slug/ticket-types</td><td>Public</td></tr>
+<tr><td>GET</td><td>/api/v1/events/:slug/gallery</td><td>Public</td></tr>
+</table>
+
+<h2>15.3 Event Management API (Admin)</h2>
+<table>
+<tr><th>Method</th><th>Endpoint</th><th>Role</th></tr>
+<tr><td>POST</td><td>/api/v1/admin/events</td><td>Admin</td></tr>
+<tr><td>GET</td><td>/api/v1/admin/events</td><td>Admin</td></tr>
+<tr><td>GET</td><td>/api/v1/admin/events/:id</td><td>Admin</td></tr>
+<tr><td>PUT</td><td>/api/v1/admin/events/:id</td><td>Admin</td></tr>
+<tr><td>DELETE</td><td>/api/v1/admin/events/:id</td><td>Admin</td></tr>
+</table>
+
+<h2>15.4 Order API</h2>
+<table>
+<tr><th>Method</th><th>Endpoint</th><th>Role</th></tr>
+<tr><td>POST</td><td>/api/v1/orders</td><td>Customer</td></tr>
+<tr><td>GET</td><td>/api/v1/orders</td><td>Customer</td></tr>
+<tr><td>GET</td><td>/api/v1/orders/:id</td><td>Customer</td></tr>
+<tr><td>POST</td><td>/api/v1/orders/:id/cancel</td><td>Customer</td></tr>
+</table>
+
+<h2>15.5 Payment API</h2>
+<table>
+<tr><th>Method</th><th>Endpoint</th><th>Role</th></tr>
+<tr><td>POST</td><td>/api/v1/payments/create</td><td>Customer</td></tr>
+<tr><td>POST</td><td>/api/v1/payments/webhook</td><td>Public</td></tr>
+<tr><td>GET</td><td>/api/v1/payments/:orderId/status</td><td>Customer</td></tr>
+</table>
+
+<h2>15.6 E-Ticket API</h2>
+<table>
+<tr><th>Method</th><th>Endpoint</th><th>Role</th></tr>
+<tr><td>GET</td><td>/api/v1/tickets</td><td>Customer</td></tr>
+<tr><td>GET</td><td>/api/v1/tickets/:id</td><td>Customer</td></tr>
+<tr><td>GET</td><td>/api/v1/tickets/:id/download</td><td>Customer</td></tr>
+<tr><td>POST</td><td>/api/v1/tickets/:id/resend</td><td>Customer</td></tr>
+</table>
+
+<h2>15.7 Check-in API</h2>
+<table>
+<tr><th>Method</th><th>Endpoint</th><th>Role</th></tr>
+<tr><td>POST</td><td>/api/v1/check-in/validate</td><td>Gate Staff</td></tr>
+<tr><td>POST</td><td>/api/v1/check-in/sync</td><td>Gate Staff</td></tr>
+<tr><td>GET</td><td>/api/v1/admin/check-ins</td><td>Admin</td></tr>
+</table>
+
+<h2>15.8 Contoh JSON Request &amp; Response</h2>
+<p><strong>Membuat Order — Request:</strong></p>
+<pre>POST /api/v1/orders
+Authorization: Bearer &lt;jwt&gt;
+
+{
+  "event_id": "evt_123",
+  "items": [{"ticket_type_id": "tt_early", "quantity": 2}],
+  "buyer": {
+    "name": "Budi Santoso",
+    "email": "budi@example.com",
+    "phone": "081234567890"
+  },
+  "promo_code": "EARLY10"
+}</pre>
+<p><strong>Response (201 Created):</strong></p>
+<pre>{
+  "success": true,
+  "data": {
+    "order_id": "ord_456",
+    "order_code": "EVT2026-ORD-456",
+    "status": "pending",
+    "subtotal": 500000,
+    "service_fee": 15000,
+    "discount_amount": 50000,
+    "total_amount": 465000,
+    "payment_deadline": "2026-09-14T10:00:00Z",
+    "payment_url": "https://app.midtrans.com/snap/..."
+  }
+}</pre>
+
+<p><strong>Validasi QR Code — Response Valid (200):</strong></p>
+<pre>{
+  "success": true,
+  "data": {
+    "ticket_id": "tkt_abc",
+    "ticket_number": "EVT2026-ABC12345",
+    "holder_name": "Budi Santoso",
+    "ticket_type": "Early Bird",
+    "status": "valid",
+    "message": "Check-in berhasil"
+  }
+}</pre>
+
+<p><strong>Response Duplicate (409):</strong></p>
+<pre>{
+  "success": false,
+  "error": {
+    "code": "TICKET_ALREADY_USED",
+    "message": "Tiket sudah digunakan pada 2026-09-13T09:30:00Z di GATE_A"
+  }
+}</pre>
+
+<h2>15.9 Standar Error Code</h2>
+<table>
+<tr><th>HTTP</th><th>Code</th><th>Deskripsi</th></tr>
+<tr><td>400</td><td>VALIDATION_ERROR</td><td>Input tidak valid</td></tr>
+<tr><td>401</td><td>UNAUTHORIZED</td><td>Token tidak valid</td></tr>
+<tr><td>403</td><td>FORBIDDEN</td><td>Tidak memiliki akses</td></tr>
+<tr><td>404</td><td>NOT_FOUND</td><td>Resource tidak ditemukan</td></tr>
+<tr><td>409</td><td>CONFLICT</td><td>Duplikasi / tiket sudah digunakan</td></tr>
+<tr><td>422</td><td>UNPROCESSABLE_ENTITY</td><td>Tidak dapat diproses</td></tr>
+<tr><td>429</td><td>RATE_LIMITED</td><td>Terlalu banyak request</td></tr>
+<tr><td>500</td><td>INTERNAL_ERROR</td><td>Kesalahan server</td></tr>
+</table>
+
+<!-- ============ 16. UML DIAGRAM ============ -->
+<div class="page-break"></div>
+<h1>16. UML DIAGRAM</h1>
+<p>Semua diagram menggunakan format Mermaid. Buka <strong>https://mermaid.live</strong>, paste kode, export PNG/SVG, lalu insert ke Word.</p>
+
+<h2>16.1 Use Case Diagram</h2>
+<pre>graph TB
+    C[Customer]
+    A[Admin Event]
+    G[Gate Staff]
+    F[Finance]
+    C --&gt; UC1[Lihat Event]
+    C --&gt; UC2[Beli Tiket]
+    C --&gt; UC3[Bayar Tiket]
+    C --&gt; UC4[Lihat E-Ticket]
+    A --&gt; UC5[Kelola Event]
+    A --&gt; UC6[Kelola Tiket]
+    G --&gt; UC7[Scan QR Code]
+    G --&gt; UC8[Check-in]
+    F --&gt; UC9[Lihat Laporan]</pre>
+
+<h2>16.2 Activity Diagram — Alur Pembelian Tiket</h2>
+<pre>flowchart TD
+    A[Pengunjung buka website] --&gt; B[Pilih Event]
+    B --&gt; C[Pilih Kategori Tiket]
+    C --&gt; D{Kuota tersedia?}
+    D --&gt;|Tidak| E[Tampilkan Sold Out]
+    D --&gt;|Ya| F[Lock inventory FOR UPDATE]
+    F --&gt; G[Isi Data Pembeli]
+    G --&gt; H[Ringkasan Order]
+    H --&gt; I[Buat Order status: pending]
+    I --&gt; J[Redirect ke Payment Gateway]
+    J --&gt; K[Pengguna bayar]
+    K --&gt; L{Webhook diterima?}
+    L --&gt;|Ya| M[Update order status: paid]
+    M --&gt; N[Generate E-Ticket QR]
+    N --&gt; O[Kirim email e-ticket]</pre>
+
+<h2>16.3 Sequence Diagram — Pembelian Tiket &amp; Pembayaran</h2>
+<pre>sequenceDiagram
+    participant C as Customer
+    participant FE as Frontend
+    participant API as Backend API
+    participant DB as PostgreSQL
+    participant PG as Payment Gateway
+    C-&gt;&gt;FE: Pilih tiket
+    FE-&gt;&gt;API: POST /orders
+    API-&gt;&gt;DB: BEGIN; SELECT FOR UPDATE
+    API-&gt;&gt;DB: INSERT order
+    API-&gt;&gt;PG: Create transaction
+    PG--&gt;&gt;API: payment_url
+    API--&gt;&gt;FE: 201 Created
+    C-&gt;&gt;PG: Bayar
+    PG-&gt;&gt;API: POST /webhook
+    API-&gt;&gt;DB: UPDATE order (paid)
+    API-&gt;&gt;DB: INSERT tickets
+    API--&gt;&gt;C: Email e-ticket</pre>
+
+<h2>16.4 Sequence Diagram — Check-in QR Code</h2>
+<pre>sequenceDiagram
+    participant G as Gate Staff
+    participant PWA as PWA Scanner
+    participant API as Backend
+    participant DB as PostgreSQL
+    G-&gt;&gt;PWA: Scan QR Code
+    PWA-&gt;&gt;API: POST /check-in/validate
+    API-&gt;&gt;API: Verify JWT signature
+    API-&gt;&gt;DB: Query ticket status
+    alt Tiket Valid
+        API-&gt;&gt;DB: INSERT checkin
+        API-&gt;&gt;DB: UPDATE ticket (used)
+        API--&gt;&gt;PWA: 200 OK Valid
+    else Tiket Used
+        API--&gt;&gt;PWA: 409 Conflict
+    else Tiket Invalid
+        API--&gt;&gt;PWA: 404 Not Found
+    end</pre>
+
+<h2>16.5 Class Diagram</h2>
+<pre>classDiagram
+    class User {
+        +UUID id
+        +String email
+        +login()
+    }
+    class Event {
+        +UUID id
+        +String name
+        +publish()
+    }
+    class Order {
+        +UUID id
+        +String status
+        +markAsPaid()
+    }
+    class Ticket {
+        +UUID id
+        +String qrCodeData
+        +checkIn()
+    }
+    User "1" --&gt; "*" Order
+    User "1" --&gt; "*" Event
+    Event "1" --&gt; "*" Ticket
+    Order "1" --&gt; "*" Ticket</pre>
+
+<h2>16.6 Component Diagram</h2>
+<pre>graph TB
+    PWA[PWA Frontend] --&gt; API[NestJS API]
+    Scanner[PWA Scanner] --&gt; API
+    API --&gt; DB[(PostgreSQL)]
+    API --&gt; Cache[(Redis)]
+    API --&gt; Storage[(S3/R2)]
+    API --&gt; PG[Payment Gateway]
+    API --&gt; Email[Email Service]</pre>
+
+<h2>16.7 Deployment Diagram</h2>
+<pre>graph TB
+    Browser[Browser/PWA] --&gt; CDN[Cloudflare CDN]
+    CDN --&gt; LB[Load Balancer]
+    LB --&gt; App1[App Server #1]
+    LB --&gt; App2[App Server #2]
+    App1 --&gt; Primary[(PostgreSQL Primary)]
+    App2 --&gt; Primary
+    Primary -.Replication.-&gt; Replica[(PostgreSQL Replica)]
+    App1 --&gt; Redis[(Redis)]
+    App1 --&gt; R2[Cloudflare R2]
+    App1 --&gt; Midtrans[Payment Gateway]</pre>
+
+<h2>16.8 State Diagram — Status Order</h2>
+<pre>stateDiagram-v2
+    [*] --&gt; Pending : Order dibuat
+    Pending --&gt; Paid : Pembayaran terverifikasi
+    Pending --&gt; Expired : Melewati batas waktu
+    Pending --&gt; Cancelled : Dibatalkan customer
+    Paid --&gt; Completed : Event selesai
+    Paid --&gt; Refunded : Refund diproses</pre>
+
+<h2>16.9 State Diagram — Status Tiket</h2>
+<pre>stateDiagram-v2
+    [*] --&gt; Valid : E-ticket diterbitkan
+    Valid --&gt; Used : Check-in di venue
+    Valid --&gt; Cancelled : Event dibatalkan
+    Valid --&gt; Refunded : Refund
+    Valid --&gt; Expired : Event selesai</pre>
+
+<!-- ============ 17. UI/UX ============ -->
+<div class="page-break"></div>
+<h1>17. UI/UX BLUEPRINT</h1>
+
+<h2>17.1 Karakter Visual</h2>
+<table>
+<tr><th>Aspek</th><th>Spesifikasi</th></tr>
+<tr><td>Tema</td><td>Dark, modern, premium, cinematic</td></tr>
+<tr><td>Warna Utama</td><td>Hitam/Charcoal (#0A0A0A, #1A1A1A)</td></tr>
+<tr><td>Accent Color</td><td>Oranye (#FF6B00, #FF8C00)</td></tr>
+<tr><td>Teks</td><td>Putih (#FFFFFF), Abu-abu (#B0B0B0)</td></tr>
+<tr><td>Tipografi Display</td><td>Bebas Neue, Oswald, Clash Display</td></tr>
+<tr><td>Tipografi Body</td><td>Inter, Satoshi, DM Sans</td></tr>
+<tr><td>Layout</td><td>Editorial, card-based, masonry grid</td></tr>
+<tr><td>Animasi</td><td>Scroll-triggered, parallax, hover glow</td></tr>
+</table>
+
+<h2>17.2 Homepage Wireframe</h2>
+<pre>[Navbar: Logo | Home Events Lineup Gallery FAQ | Buy Tickets]
+-----------------------------------------------------------
+| FULL-BLEED HERO IMAGE                                   |
+| SOUNDWAVE FEST 2026                                     |
+| "Feel the Rhythm"                                       |
+| 31 Dec 2026 - Istora Senayan                            |
+| [Buy Tickets] [View Lineup]                             |
+| Countdown: 120 Days : 14 Hrs : 30 Min                   |
+-----------------------------------------------------------
+| EVENT INFORMATION                                       |
+-----------------------------------------------------------
+| LINEUP (grid kartu artis)                               |
+-----------------------------------------------------------
+| SCHEDULE (tab per hari)                                 |
+-----------------------------------------------------------
+| OFFICIAL PLAYLIST (Spotify)                             |
+-----------------------------------------------------------
+| GALLERY / MEMORIES                                      |
+-----------------------------------------------------------
+| FAQ (accordion)                                         |
+-----------------------------------------------------------
+| FOOTER                                                  |</pre>
+
+<h2>17.3 Halaman Checkout</h2>
+<pre>[Kembali]              Checkout
+---------------------------------------
+Pilih Kategori Tiket
+  [Early Bird - Rp 250.000 - Sisa: 45]
+  [- 1 +]
+Data Pembeli
+  [Nama Lengkap]
+  [Email]
+  [No. Telepon]
+Data Pemilik Tiket
+  [ ] Sama dengan pembeli
+Kode Promo
+  [Masukkan kode] [Apply]
+Ringkasan Pesanan
+  Subtotal:      Rp 500.000
+  Diskon:       -Rp  50.000
+  Biaya Layanan: Rp  15.000
+  Total:         Rp 465.000
+[Proceed to Payment]</pre>
+
+<h2>17.4 Halaman Check-in Scanner (PWA)</h2>
+<pre>[Gate A]         [Logout]
+---------------------------------
+| [KAMERA VIEW]                 |
+|   [QR FRAME]                  |
+---------------------------------
+Status: Online
+Checked-in: 1,234
+Riwayat Scan:
+  OK   Budi Santoso    09:30
+  WARN Ani Wijaya (used)
+  ERR  Tiket Invalid</pre>
+
+<h2>17.5 State Handling</h2>
+<table>
+<tr><th>State</th><th>Implementasi</th></tr>
+<tr><td>Loading</td><td>Skeleton screen, spinner, progress bar</td></tr>
+<tr><td>Empty</td><td>Ilustrasi + pesan + CTA</td></tr>
+<tr><td>Error</td><td>Pesan error + tombol retry</td></tr>
+<tr><td>Success</td><td>Animasi centang hijau</td></tr>
+<tr><td>Offline</td><td>Banner + cached data</td></tr>
+</table>
+
+<h2>17.6 Accessibility</h2>
+<ul>
+<li>Kontras warna minimal 4.5:1</li>
+<li>Navigasi keyboard untuk semua interaksi</li>
+<li>ARIA labels pada komponen interaktif</li>
+<li>Alt text pada semua gambar</li>
+<li>Focus indicator yang jelas</li>
+<li>Reduced motion support</li>
+</ul>
+
+<h2>17.7 UX untuk Koneksi Lambat</h2>
+<ul>
+<li>Lazy loading gambar dengan placeholder blur</li>
+<li>Skeleton screens untuk konten dinamis</li>
+<li>Prioritas konten above-the-fold</li>
+<li>Optimasi gambar (WebP/AVIF)</li>
+<li>Service worker caching</li>
+<li>Countdown timer tetap akurat offline</li>
+</ul>
+
+<!-- ============ 18. BUSINESS RULES ============ -->
+<div class="page-break"></div>
+<h1>18. BUSINESS RULES</h1>
+<table>
+<tr><th>No</th><th>Aturan</th><th>Implementasi</th></tr>
+<tr><td>BR-01</td><td>Tiket hanya diterbitkan setelah pembayaran terverifikasi</td><td>Generate ticket di webhook handler</td></tr>
+<tr><td>BR-02</td><td>Tiket yang sudah digunakan tidak dapat digunakan kembali</td><td>Cek status=used sebelum check-in</td></tr>
+<tr><td>BR-03</td><td>Order yang melewati batas waktu otomatis expired</td><td>Cron job setiap 5 menit</td></tr>
+<tr><td>BR-04</td><td>Kuota tiket tidak boleh melebihi kapasitas</td><td>CHECK (sold_count &lt;= quota) + row lock</td></tr>
+<tr><td>BR-05</td><td>Harga tiket diambil dari server, bukan frontend</td><td>Validasi harga di backend</td></tr>
+<tr><td>BR-06</td><td>Pembayaran diverifikasi melalui webhook atau API resmi</td><td>Verifikasi signature + cek status</td></tr>
+<tr><td>BR-07</td><td>Satu QR Code tidak boleh menghasilkan check-in ganda</td><td>Append-only logs + unique constraint</td></tr>
+<tr><td>BR-08</td><td>Tiket cancelled/refunded tidak dapat digunakan</td><td>Cek status sebelum validasi</td></tr>
+<tr><td>BR-09</td><td>Admin hanya dapat mengakses event sesuai hak aksesnya</td><td>RBAC + Row-Level Security</td></tr>
+<tr><td>BR-10</td><td>Setiap perubahan penting tercatat di audit log</td><td>Trigger audit log pada CRUD</td></tr>
+<tr><td>BR-11</td><td>Kebijakan refund dapat dikonfigurasi per event</td><td>Field refund_policy di events</td></tr>
+<tr><td>BR-12</td><td>Status event memengaruhi ketersediaan pembelian</td><td>Hanya event published yang dapat dibeli</td></tr>
+</table>
+
+<!-- ============ 19. SECURITY ============ -->
+<h1>19. SECURITY</h1>
+
+<h2>19.1 Authentication &amp; Authorization</h2>
+<p>JWT dengan access token (15 menit) dan refresh token (7 hari). RBAC dengan permission-based access control. Guard di setiap endpoint API. Row-Level Security (PostgreSQL RLS) untuk isolasi data multi-tenant.</p>
+
+<h2>19.2 Password Hashing</h2>
+<p>Menggunakan bcrypt dengan cost factor 12. Password minimal 8 karakter, kombinasi huruf dan angka.</p>
+
+<h2>19.3 HTTPS</h2>
+<p>Wajib HTTPS di semua environment production. HSTS header dengan max-age 1 tahun. Redirect HTTP → HTTPS.</p>
+
+<h2>19.4 Input Validation</h2>
+<p>class-validator di NestJS DTO. Zod di frontend form validation. Sanitasi input untuk mencegah XSS. Validasi tipe file upload.</p>
+
+<h2>19.5 SQL Injection Prevention</h2>
+<p>Menggunakan Prisma ORM dengan parameterized queries. Tidak ada raw query tanpa parameter binding.</p>
+
+<h2>19.6 XSS Prevention</h2>
+<p>React secara default melakukan escaping. Content Security Policy (CSP) header. Sanitasi HTML jika menggunakan dangerouslySetInnerHTML.</p>
+
+<h2>19.7 CSRF Protection</h2>
+<p>Untuk API dengan cookie-based auth: SameSite=Strict + CSRF token. Untuk API dengan JWT di header: CSRF tidak relevan.</p>
+
+<h2>19.8 Rate Limiting</h2>
+<table>
+<tr><th>Endpoint</th><th>Limit</th><th>Window</th></tr>
+<tr><td>/auth/*</td><td>10 requests</td><td>1 menit</td></tr>
+<tr><td>/orders</td><td>5 requests</td><td>1 menit</td></tr>
+<tr><td>/check-in/validate</td><td>100 requests</td><td>1 menit</td></tr>
+<tr><td>Lainnya</td><td>100 requests</td><td>1 menit</td></tr>
+</table>
+
+<h2>19.9 Secure File Upload</h2>
+<p>Validasi MIME type, batas ukuran (10MB gambar, 100MB video), scan malware, simpan di object storage dengan URL tidak dapat ditebak.</p>
+
+<h2>19.10 Payment Webhook Signature Verification</h2>
+<p>Verifikasi HMAC signature menggunakan raw body. Bandingkan signature dengan timing-safe comparison. Tolak webhook tanpa signature valid.</p>
+
+<h2>19.11 Idempotency</h2>
+<p>Setiap webhook event memiliki unique event ID. Simpan di payments.idempotency_key. Jika sudah ada, return 200 tanpa memproses ulang.</p>
+
+<h2>19.12 Pencegahan Manipulasi Harga</h2>
+<p>Harga tiket selalu diambil dari database server. Frontend hanya kirim ticket_type_id dan quantity. Backend hitung ulang total.</p>
+
+<h2>19.13 Pencegahan QR Code Palsu</h2>
+<p>QR Code berisi signed JWT token dengan signature RS256. Public key tersimpan di PWA scanner. Token memiliki expiry timestamp.</p>
+
+<h2>19.14 Pencegahan Double Check-in</h2>
+<p>Setiap check-in dicatat di tabel ticket_checkins (append-only). Unique constraint: satu tiket satu check-in valid. Log tidak dapat dihapus.</p>
+
+<h2>19.15 Data Privacy</h2>
+<p>GDPR/UU PDP compliance. Data pribadi dienkripsi at rest. Akses data dibatasi berdasarkan role. Audit log untuk akses data sensitif.</p>
+
+<h2>19.16 Audit Logging</h2>
+<p>Semua operasi CRUD pada entitas penting dicatat. Log mencakup: user, action, entity, old/new values, IP, user agent, timestamp. Log append-only.</p>
+
+<h2>19.17 Backup Database</h2>
+<p>Daily automated backup (pg_dump). Simpan di object storage dengan retention 30 hari. WAL archiving untuk point-in-time recovery. Test restore berkala.</p>
+
+<h2>19.18 Monitoring</h2>
+<p>Sentry untuk error tracking. Grafana + Prometheus untuk metrics. Health check endpoint /health. Alerting ke Slack/Email.</p>
+
+<h2>19.19 Error Handling</h2>
+<p>Semua error dikembalikan dalam format JSON konsisten. Tidak mengekspos stack trace ke client. Log error di server dengan detail lengkap.</p>
+
+<h2>19.20 Disaster Recovery</h2>
+<table>
+<tr><th>Aspek</th><th>Target</th></tr>
+<tr><td>RPO (Recovery Point Objective)</td><td>1 jam</td></tr>
+<tr><td>RTO (Recovery Time Objective)</td><td>4 jam</td></tr>
+<tr><td>Backup lintas region</td><td>Ya</td></tr>
+<tr><td>Dokumentasi runbook</td><td>Ya</td></tr>
+<tr><td>Test DR</td><td>Setiap 6 bulan</td></tr>
+</table>
+
+<!-- ============ 20. NON-FUNCTIONAL ============ -->
+<div class="page-break"></div>
+<h1>20. NON-FUNCTIONAL REQUIREMENTS</h1>
+<table>
+<tr><th>Kategori</th><th>Requirement</th><th>Target</th></tr>
+<tr><td>Performance</td><td>API response time</td><td>&lt; 500ms (P95)</td></tr>
+<tr><td>Performance</td><td>Page load time (3G)</td><td>&lt; 3 detik</td></tr>
+<tr><td>Performance</td><td>Time to Interactive</td><td>&lt; 5 detik</td></tr>
+<tr><td>Scalability</td><td>Concurrent users</td><td>10.000 (flash sale)</td></tr>
+<tr><td>Scalability</td><td>Tickets per event</td><td>50.000</td></tr>
+<tr><td>Availability</td><td>Uptime</td><td>99.5%</td></tr>
+<tr><td>Reliability</td><td>Data durability</td><td>99.999999999%</td></tr>
+<tr><td>Security</td><td>OWASP Top 10</td><td>Compliant</td></tr>
+<tr><td>Accessibility</td><td>WCAG</td><td>Level AA</td></tr>
+<tr><td>PWA</td><td>Lighthouse score</td><td>&gt; 90</td></tr>
+<tr><td>Compatibility</td><td>Browser</td><td>Chrome/Safari/Firefox/Edge</td></tr>
+<tr><td>Compatibility</td><td>Device</td><td>Mobile/tablet/desktop</td></tr>
+<tr><td>Maintainability</td><td>Test coverage</td><td>&gt; 80%</td></tr>
+<tr><td>Observability</td><td>Log retention</td><td>90 hari</td></tr>
+</table>
+
+<!-- ============ 21. TESTING ============ -->
+<h1>21. TESTING STRATEGY</h1>
+
+<h2>21.1 Jenis Pengujian</h2>
+<table>
+<tr><th>No</th><th>Jenis</th><th>Tools</th><th>Target</th></tr>
+<tr><td>1</td><td>Unit Testing</td><td>Jest, Vitest</td><td>Services, utils</td></tr>
+<tr><td>2</td><td>Integration Testing</td><td>Jest, Supertest</td><td>API + DB</td></tr>
+<tr><td>3</td><td>API Testing</td><td>Postman, Newman</td><td>Semua endpoint</td></tr>
+<tr><td>4</td><td>E2E Testing</td><td>Playwright, Cypress</td><td>User flows</td></tr>
+<tr><td>5</td><td>UAT</td><td>Manual</td><td>Business req</td></tr>
+<tr><td>6</td><td>Security Testing</td><td>OWASP ZAP, Burp</td><td>Vulnerabilities</td></tr>
+<tr><td>7</td><td>Performance Testing</td><td>k6, Artillery</td><td>Response time</td></tr>
+<tr><td>8</td><td>Load Testing</td><td>k6, JMeter</td><td>Flash sale</td></tr>
+<tr><td>9</td><td>Payment Testing</td><td>Sandbox gateway</td><td>Semua metode</td></tr>
+<tr><td>10</td><td>QR Check-in Testing</td><td>Manual + automated</td><td>Valid/invalid/dup</td></tr>
+<tr><td>11</td><td>PWA Testing</td><td>Lighthouse</td><td>Installability</td></tr>
+<tr><td>12</td><td>Cross-browser</td><td>BrowserStack</td><td>4 browser</td></tr>
+<tr><td>13</td><td>Mobile Responsiveness</td><td>BrowserStack</td><td>Various devices</td></tr>
+</table>
+
+<h2>21.2 Contoh Test Case Penting</h2>
+<table>
+<tr><th>ID</th><th>Test Case</th><th>Expected Result</th></tr>
+<tr><td>TC-01</td><td>Pembelian tiket berhasil</td><td>Order paid, e-ticket diterbitkan</td></tr>
+<tr><td>TC-02</td><td>Overselling prevention</td><td>Hanya 1 berhasil, 1 gagal</td></tr>
+<tr><td>TC-03</td><td>Webhook idempotency</td><td>Order diproses sekali</td></tr>
+<tr><td>TC-04</td><td>Webhook signature invalid</td><td>Ditolak</td></tr>
+<tr><td>TC-05</td><td>Check-in tiket valid</td><td>Check-in berhasil</td></tr>
+<tr><td>TC-06</td><td>Check-in tiket duplikat</td><td>Ditolak</td></tr>
+<tr><td>TC-07</td><td>Check-in offline</td><td>Tercatat lokal, sync online</td></tr>
+<tr><td>TC-08</td><td>Order expired</td><td>Status expired</td></tr>
+<tr><td>TC-09</td><td>Promo code valid</td><td>Diskon diterapkan</td></tr>
+<tr><td>TC-10</td><td>Promo code invalid</td><td>Error</td></tr>
+<tr><td>TC-11</td><td>Refund process</td><td>Order refunded</td></tr>
+<tr><td>TC-12</td><td>RBAC</td><td>403 Forbidden</td></tr>
+<tr><td>TC-13</td><td>XSS prevention</td><td>Script di-escape</td></tr>
+<tr><td>TC-14</td><td>SQL injection</td><td>Query aman</td></tr>
+<tr><td>TC-15</td><td>Rate limiting</td><td>429 Too Many Requests</td></tr>
+<tr><td>TC-16</td><td>PWA offline</td><td>Cached ditampilkan</td></tr>
+<tr><td>TC-17</td><td>PWA install</td><td>Install prompt muncul</td></tr>
+<tr><td>TC-18</td><td>Load test flash sale</td><td>&lt; 1 detik, no error</td></tr>
+</table>
+
+<!-- ============ 22. DEPLOYMENT ============ -->
+<div class="page-break"></div>
+<h1>22. DEPLOYMENT ARCHITECTURE</h1>
+
+<h2>22.1 Environment</h2>
+<table>
+<tr><th>Environment</th><th>Tujuan</th><th>Infrastruktur</th></tr>
+<tr><td>Development</td><td>Local development</td><td>Docker Compose</td></tr>
+<tr><td>Staging</td><td>Pre-production testing</td><td>Cloud VM (1 instance)</td></tr>
+<tr><td>Production</td><td>Live</td><td>Cloud VM (2+ instances)</td></tr>
+</table>
+
+<h2>22.2 CI/CD Pipeline</h2>
+<pre>name: Deploy
+on: [push]
+jobs:
+  test:
+    steps: [checkout, npm ci, npm test, npm run lint]
+  build:
+    steps: [docker build, docker push]
+  deploy:
+    steps: [ssh deploy, docker pull, docker-compose up -d]</pre>
+
+<h2>22.3 Infrastructure</h2>
+<table>
+<tr><th>Komponen</th><th>Spesifikasi</th></tr>
+<tr><td>App Server</td><td>2 vCPU, 4GB RAM (minimal), auto-scaling</td></tr>
+<tr><td>Database</td><td>PostgreSQL 16, 2 vCPU, 8GB RAM, SSD</td></tr>
+<tr><td>Redis</td><td>1 vCPU, 2GB RAM</td></tr>
+<tr><td>Object Storage</td><td>Cloudflare R2 / AWS S3</td></tr>
+<tr><td>CDN</td><td>Cloudflare</td></tr>
+<tr><td>Load Balancer</td><td>Nginx / Cloudflare</td></tr>
+</table>
+
+<!-- ============ 23. ROADMAP ============ -->
+<h1>23. ROADMAP PENGEMBANGAN</h1>
+
+<h2>Fase 1 — MVP (Bulan 1-3)</h2>
+<table>
+<tr><th>Fitur</th><th>Kompleksitas</th><th>Risiko</th></tr>
+<tr><td>Public landing page</td><td>Sedang</td><td>Rendah</td></tr>
+<tr><td>Event management</td><td>Sedang</td><td>Rendah</td></tr>
+<tr><td>Artist/lineup management</td><td>Rendah</td><td>Rendah</td></tr>
+<tr><td>Ticket management</td><td>Tinggi</td><td>Sedang</td></tr>
+<tr><td>Checkout</td><td>Tinggi</td><td>Tinggi</td></tr>
+<tr><td>Payment gateway</td><td>Tinggi</td><td>Tinggi</td></tr>
+<tr><td>E-ticket QR generation</td><td>Sedang</td><td>Sedang</td></tr>
+<tr><td>Admin dashboard dasar</td><td>Sedang</td><td>Rendah</td></tr>
+</table>
+
+<h2>Fase 2 (Bulan 4-6)</h2>
+<p>QR check-in, schedule multi-stage, customer account, promo/voucher, notification, reporting.</p>
+
+<h2>Fase 3 (Bulan 7-9)</h2>
+<p>CMS lengkap, gallery &amp; memories, advanced analytics, multi-event management, PWA enhancement, advanced finance, integrasi eksternal.</p>
+
+<!-- ============ 24. RISIKO ============ -->
+<h1>24. RISIKO DAN MITIGASI</h1>
+<table>
+<tr><th>No</th><th>Risiko</th><th>Prob</th><th>Dampak</th><th>Mitigasi</th></tr>
+<tr><td>R-01</td><td>Overselling flash sale</td><td>Sedang</td><td>Tinggi</td><td>Row lock + queue</td></tr>
+<tr><td>R-02</td><td>Webhook gagal/delay</td><td>Sedang</td><td>Tinggi</td><td>Retry + polling</td></tr>
+<tr><td>R-03</td><td>Tiket palsu / QR copy</td><td>Rendah</td><td>Tinggi</td><td>Signed JWT</td></tr>
+<tr><td>R-04</td><td>Downtime saat event</td><td>Rendah</td><td>Tinggi</td><td>LB, auto-scale</td></tr>
+<tr><td>R-05</td><td>Data leak</td><td>Rendah</td><td>Tinggi</td><td>Encryption, RBAC</td></tr>
+<tr><td>R-06</td><td>Gateway downtime</td><td>Sedang</td><td>Sedang</td><td>Multi-gateway</td></tr>
+<tr><td>R-07</td><td>Internet buruk venue</td><td>Tinggi</td><td>Sedang</td><td>Offline-first</td></tr>
+<tr><td>R-08</td><td>Scope creep</td><td>Tinggi</td><td>Sedang</td><td>Agile, MoSCoW</td></tr>
+<tr><td>R-09</td><td>Regulasi payment</td><td>Rendah</td><td>Sedang</td><td>Pantau regulasi</td></tr>
+<tr><td>R-10</td><td>Adopsi rendah</td><td>Sedang</td><td>Tinggi</td><td>UX testing</td></tr>
+</table>
+
+<!-- ============ 25. KESIMPULAN ============ -->
+<h1>25. KESIMPULAN</h1>
+<p>Blueprint ini merancang platform event management dan ticketing berbasis PWA yang komprehensif, mencakup seluruh rantai nilai event musik - dari promosi, penjualan tiket, pembayaran, penerbitan e-ticket, hingga check-in di venue.</p>
+<p><strong>Poin Kunci:</strong></p>
+<ol>
+<li>Arsitektur Modular Monolith dengan Next.js dan NestJS memberikan fondasi yang scalable, secure, dan maintainable.</li>
+<li>Database PostgreSQL dengan row-level locking menjamin integritas data dan mencegah overselling.</li>
+<li>Integrasi payment gateway Indonesia (Midtrans/Xendit) dengan webhook yang aman.</li>
+<li>Desain UI/UX dengan tema dark, cinematic, dan premium.</li>
+<li>PWA memungkinkan akses offline untuk halaman publik dan validasi tiket.</li>
+</ol>
+<p>Dokumen ini siap dijadikan acuan dalam pengembangan, dengan roadmap bertahap yang memungkinkan peluncuran MVP dalam 3 bulan pertama, diikuti dengan fitur-fitur lanjutan pada fase berikutnya.</p>
+
+<p style="text-align:center; margin-top: 40pt; font-size: 14pt; font-weight: bold; color: #FF6B00;">— SELESAI —</p>
+
+</body>
+</html>
