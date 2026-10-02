@@ -1,0 +1,707 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// ENUMS
+// ============================================
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  BANNED
+}
+
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+  ONGOING
+  COMPLETED
+  CANCELLED
+}
+
+enum TicketTypeStatus {
+  AVAILABLE
+  ALMOST_SOLD_OUT
+  SOLD_OUT
+  CLOSED
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  COMPLETED
+  EXPIRED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  EXPIRED
+  REFUNDED
+}
+
+enum TicketStatus {
+  VALID
+  USED
+  CANCELLED
+  REFUNDED
+  EXPIRED
+}
+
+enum PromoType {
+  PERCENTAGE
+  FIXED_AMOUNT
+}
+
+enum PromoCodeStatus {
+  ACTIVE
+  INACTIVE
+  EXPIRED
+}
+
+enum RefundStatus {
+  REQUESTED
+  APPROVED
+  PROCESSED
+  REJECTED
+}
+
+enum MemoryStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum NotificationChannel {
+  EMAIL
+  PUSH
+  WHATSAPP
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  FAILED
+}
+
+enum CheckinStatus {
+  SUCCESS
+  DUPLICATE
+  INVALID
+  EXPIRED
+  WRONG_EVENT
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  LOGIN
+  LOGOUT
+  PAYMENT
+  CHECKIN
+  REFUND
+  EXPORT
+}
+
+// ============================================
+// CORE TABLES
+// ============================================
+model User {
+  id                String    @id @default(uuid())
+  email             String    @unique
+  passwordHash      String    @map("password_hash")
+  name              String
+  phone             String?
+  emailVerifiedAt   DateTime? @map("email_verified_at")
+  isActive          Boolean   @default(true) @map("is_active")
+  avatarUrl         String?   @map("avatar_url")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+  deletedAt         DateTime? @map("deleted_at")
+
+  userRoles         UserRole[]
+  organizedEvents   Event[]            @relation("EventOrganizer")
+  orders            Order[]            @relation("CustomerOrders")
+  promoUsages       PromoUsage[]
+  refunds           Refund[]           @relation("RefundProcessor")
+  memories          MemorySubmission[]
+  notifications     Notification[]
+  auditLogs         AuditLog[]
+  checkins          TicketCheckin[]    @relation("CheckinStaff")
+
+  @@index([email])
+  @@index([isActive])
+  @@map("users")
+}
+
+model Role {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  level       String   // SYSTEM, ORGANIZATION, EVENT, SELF
+
+  userRoles       UserRole[]
+  rolePermissions RolePermission[]
+
+  @@map("roles")
+}
+
+model Permission {
+  id      String @id @default(uuid())
+  name    String @unique
+  module  String
+
+  rolePermissions RolePermission[]
+
+  @@map("permissions")
+}
+
+model UserRole {
+  userId String @map("user_id")
+  roleId String @map("role_id")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+  @@map("user_roles")
+}
+
+model RolePermission {
+  roleId       String @map("role_id")
+  permissionId String @map("permission_id")
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+// ============================================
+// VENUE & EVENT
+// ============================================
+model Venue {
+  id        String  @id @default(uuid())
+  name      String
+  address   String
+  city      String
+  latitude  Decimal @db.Decimal(10, 8)
+  longitude Decimal @db.Decimal(11, 8)
+  capacity  Int
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  events Event[]
+
+  @@map("venues")
+}
+
+model Event {
+  id                String      @id @default(uuid())
+  name              String
+  slug              String      @unique
+  description       String
+  bannerUrl         String?     @map("banner_url")
+  posterUrl         String?     @map("poster_url")
+  startDate         DateTime    @map("start_date")
+  endDate           DateTime    @map("end_date")
+  venueId           String      @map("venue_id")
+  organizerId       String      @map("organizer_id")
+  status            EventStatus @default(DRAFT)
+  termsConditions   String?     @map("terms_conditions")
+  refundPolicy      String?     @map("refund_policy")
+  seoTitle          String?     @map("seo_title")
+  seoDescription    String?     @map("seo_description")
+  createdAt         DateTime    @default(now()) @map("created_at")
+  updatedAt         DateTime    @updatedAt @map("updated_at")
+  deletedAt         DateTime?   @map("deleted_at")
+
+  venue          Venue           @relation(fields: [venueId], references: [id])
+  organizer      User            @relation("EventOrganizer", fields: [organizerId], references: [id])
+  stages         EventStage[]
+  ticketTypes    TicketType[]
+  artists        EventArtist[]
+  schedules      Schedule[]
+  orders         Order[]
+  tickets        Ticket[]
+  galleries      Gallery[]
+  memories       MemorySubmission[]
+  playlists      Playlist[]
+  promoCodes     PromoCode[]
+
+  @@index([slug])
+  @@index([organizerId])
+  @@index([status])
+  @@index([startDate])
+  @@map("events")
+}
+
+model EventStage {
+  id        String   @id @default(uuid())
+  eventId   String   @map("event_id")
+  name      String
+  capacity  Int
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  event     Event      @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  schedules Schedule[]
+
+  @@map("event_stages")
+}
+
+// ============================================
+// ARTIST & LINEUP
+// ============================================
+model Artist {
+  id           String   @id @default(uuid())
+  name         String
+  bio          String?
+  genre        String?
+  photoUrl     String?  @map("photo_url")
+  socialMedia  Json?    @map("social_media")
+  musicLinks   Json?    @map("music_links")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  eventArtists EventArtist[]
+  schedules    Schedule[]
+
+  @@map("artists")
+}
+
+model EventArtist {
+  eventId      String   @map("event_id")
+  artistId     String   @map("artist_id")
+  isHeadliner  Boolean  @default(false) @map("is_headliner")
+  displayOrder Int?     @map("display_order")
+
+  event  Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  artist Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
+
+  @@id([eventId, artistId])
+  @@map("event_artists")
+}
+
+// ============================================
+// SCHEDULE
+// ============================================
+model Schedule {
+  id              String   @id @default(uuid())
+  eventId         String   @map("event_id")
+  stageId         String   @map("stage_id")
+  artistId        String   @map("artist_id")
+  day             Int
+  startTime       DateTime @map("start_time")
+  endTime         DateTime @map("end_time")
+  durationMinutes Int      @map("duration_minutes")
+  status          String   @default("scheduled") // scheduled, ongoing, completed, cancelled
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  event  Event       @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  stage  EventStage  @relation(fields: [stageId], references: [id], onDelete: Cascade)
+  artist Artist      @relation(fields: [artistId], references: [id], onDelete: Cascade)
+
+  @@index([eventId, day])
+  @@map("schedules")
+}
+
+// ============================================
+// TICKETING
+// ============================================
+model TicketType {
+  id               String           @id @default(uuid())
+  eventId          String           @map("event_id")
+  name             String
+  description      String?
+  price            Decimal          @db.Decimal(12, 2)
+  quota            Int
+  soldCount        Int              @default(0) @map("sold_count")
+  saleStart        DateTime         @map("sale_start")
+  saleEnd          DateTime         @map("sale_end")
+  maxPerCustomer   Int?             @map("max_per_customer")
+  accessType       String?          @map("access_type") // daily, weekend, full_pass
+  status           TicketTypeStatus @default(AVAILABLE)
+  serviceFee       Decimal          @default(0) @db.Decimal(12, 2) @map("service_fee")
+  taxRate          Decimal          @default(0) @db.Decimal(5, 2) @map("tax_rate")
+  createdAt        DateTime         @default(now()) @map("created_at")
+  updatedAt        DateTime         @updatedAt @map("updated_at")
+
+  event       Event         @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  orderItems  OrderItem[]
+  tickets     Ticket[]
+  promoCodes  PromoCode[]
+
+  @@index([eventId])
+  @@index([status])
+  @@index([saleStart, saleEnd])
+  @@map("ticket_types")
+}
+
+// ============================================
+// ORDERS
+// ============================================
+model Order {
+  id              String       @id @default(uuid())
+  orderCode       String       @unique @map("order_code")
+  customerId      String       @map("customer_id")
+  eventId         String       @map("event_id")
+  status          OrderStatus  @default(PENDING)
+  subtotal        Decimal      @db.Decimal(12, 2)
+  serviceFee      Decimal      @db.Decimal(12, 2) @map("service_fee")
+  taxAmount       Decimal      @db.Decimal(12, 2) @map("tax_amount")
+  discountAmount  Decimal      @default(0) @db.Decimal(12, 2) @map("discount_amount")
+  totalAmount     Decimal      @db.Decimal(12, 2) @map("total_amount")
+  paymentDeadline DateTime     @map("payment_deadline")
+  paidAt          DateTime?    @map("paid_at")
+  promoCodeId     String?      @map("promo_code_id")
+  createdAt       DateTime     @default(now()) @map("created_at")
+  updatedAt       DateTime     @updatedAt @map("updated_at")
+
+  customer     User          @relation("CustomerOrders", fields: [customerId], references: [id])
+  event        Event         @relation(fields: [eventId], references: [id])
+  items        OrderItem[]
+  payments     Payment[]
+  tickets      Ticket[]
+  promoCode    PromoCode?    @relation(fields: [promoCodeId], references: [id])
+  promoUsages  PromoUsage[]
+  refunds      Refund[]
+
+  @@index([customerId])
+  @@index([eventId])
+  @@index([status])
+  @@index([orderCode])
+  @@map("orders")
+}
+
+model OrderItem {
+  id            String  @id @default(uuid())
+  orderId       String  @map("order_id")
+  ticketTypeId  String  @map("ticket_type_id")
+  quantity      Int
+  unitPrice     Decimal @db.Decimal(12, 2) @map("unit_price")
+  totalPrice    Decimal @db.Decimal(12, 2) @map("total_price")
+
+  order       Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  ticketType  TicketType  @relation(fields: [ticketTypeId], references: [id])
+
+  @@map("order_items")
+}
+
+// ============================================
+// PAYMENTS
+// ============================================
+model Payment {
+  id                     String         @id @default(uuid())
+  orderId                String         @map("order_id")
+  gateway                String         // midtrans, xendit
+  gatewayTransactionId   String         @map("gateway_transaction_id")
+  gatewayReference       String?        @map("gateway_reference")
+  method                 String         // va, qris, ewallet, card
+  amount                 Decimal        @db.Decimal(12, 2)
+  status                 PaymentStatus  @default(PENDING)
+  rawResponse            Json?          @map("raw_response")
+  idempotencyKey         String         @unique @map("idempotency_key")
+  paidAt                 DateTime?      @map("paid_at")
+  createdAt              DateTime       @default(now()) @map("created_at")
+  updatedAt              DateTime       @updatedAt @map("updated_at")
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([orderId])
+  @@index([gatewayTransactionId])
+  @@index([idempotencyKey])
+  @@index([status])
+  @@map("payments")
+}
+
+// Need to add the inverse relations that User expects
+// User has: payments Payment[] @relation("PaymentCustomer")
+// So Payment needs: customer User @relation("PaymentCustomer", fields: [customerId], references: [id])
+
+// But Payment doesn't have customerId - it has orderId which links to Order which has customerId
+// So we need to add customerId to Payment or remove the relation from User
+
+// Actually, looking at the blueprint, Payment has orderId, and Order has customerId
+// The User.payments relation should probably go through Order
+// Let's remove the direct User.payments relation and instead use a computed field or remove it
+
+// ============================================
+// E-TICKETS
+// ============================================
+model Ticket {
+  id                String       @id @default(uuid())
+  ticketNumber      String       @unique @map("ticket_number")
+  orderId           String       @map("order_id")
+  ticketTypeId      String       @map("ticket_type_id")
+  eventId           String       @map("event_id")
+  holderName        String       @map("holder_name")
+  holderEmail       String       @map("holder_email")
+  qrCodeData        String       @map("qr_code_data") // Signed JWT
+  status            TicketStatus @default(VALID)
+  checkedInAt       DateTime?    @map("checked_in_at")
+  checkedInGate     String?      @map("checked_in_gate")
+  checkedInBy       String?      @map("checked_in_by")
+  createdAt         DateTime     @default(now()) @map("created_at")
+  updatedAt         DateTime     @updatedAt @map("updated_at")
+
+  order       Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  ticketType  TicketType  @relation(fields: [ticketTypeId], references: [id])
+  event       Event       @relation(fields: [eventId], references: [id])
+  checkins    TicketCheckin[]
+
+  @@index([orderId])
+  @@index([eventId])
+  @@index([ticketNumber])
+  @@index([status])
+  @@index([holderEmail])
+  @@map("tickets")
+}
+
+model TicketCheckin {
+  id        String @id @default(uuid())
+  ticketId  String @map("ticket_id")
+  gateId    String @map("gate_id")
+  staffId   String @map("staff_id")
+  scannedAt DateTime @map("scanned_at")
+  isOffline Boolean @default(false) @map("is_offline")
+  syncedAt  DateTime? @map("synced_at")
+  deviceId  String? @map("device_id")
+
+  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  staff  User   @relation("CheckinStaff", fields: [staffId], references: [id])
+
+  @@unique([ticketId]) // One valid check-in per ticket
+  @@index([gateId])
+  @@index([staffId])
+  @@index([scannedAt])
+  @@map("ticket_checkins")
+}
+
+// ============================================
+// PROMO / VOUCHER
+// ============================================
+model PromoCode {
+  id                    String       @id @default(uuid())
+  code                  String       @unique
+  type                  PromoType
+  value                 Decimal      @db.Decimal(12, 2)
+  maxUses               Int?         @map("max_uses")
+  maxUsesPerCustomer    Int?         @map("max_uses_per_customer")
+  validFrom             DateTime     @map("valid_from")
+  validUntil            DateTime     @map("valid_until")
+  eventId               String       @map("event_id")
+  ticketTypeIds         String[]     @map("ticket_type_ids") @db.Uuid
+  usedCount             Int          @default(0) @map("used_count")
+  isActive              Boolean      @default(true) @map("is_active")
+  createdAt             DateTime     @default(now()) @map("created_at")
+  updatedAt             DateTime     @updatedAt @map("updated_at")
+
+  event        Event        @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  ticketTypes  TicketType[]
+  usages       PromoUsage[]
+  orders       Order[]
+
+  @@index([eventId])
+  @@index([code])
+  @@index([validFrom, validUntil])
+  @@map("promo_codes")
+}
+
+model PromoUsage {
+  id              String   @id @default(uuid())
+  promoCodeId     String   @map("promo_code_id")
+  customerId      String   @map("customer_id")
+  orderId         String   @map("order_id")
+  discountAmount  Decimal  @db.Decimal(12, 2) @map("discount_amount")
+  usedAt          DateTime @default(now()) @map("used_at")
+
+  promoCode PromoCode @relation(fields: [promoCodeId], references: [id], onDelete: Cascade)
+  customer  User      @relation(fields: [customerId], references: [id])
+  order     Order     @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([promoCodeId, customerId, orderId])
+  @@map("promo_usages")
+}
+
+// ============================================
+// REFUNDS
+// ============================================
+model Refund {
+  id          String       @id @default(uuid())
+  orderId     String       @map("order_id")
+  amount      Decimal      @db.Decimal(12, 2)
+  reason      String
+  status      RefundStatus @default(REQUESTED)
+  processedBy String?      @map("processed_by")
+  processedAt DateTime?    @map("processed_at")
+  createdAt   DateTime     @default(now()) @map("created_at")
+
+  order     Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  processor User? @relation("RefundProcessor", fields: [processedBy], references: [id])
+
+  @@index([orderId])
+  @@index([status])
+  @@map("refunds")
+}
+
+// ============================================
+// GALLERY & MEMORIES
+// ============================================
+model Gallery {
+  id        String   @id @default(uuid())
+  eventId   String   @map("event_id")
+  title     String
+  coverUrl  String?  @map("cover_url")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  items GalleryItem[]
+
+  @@map("galleries")
+}
+
+model GalleryItem {
+  id           String   @id @default(uuid())
+  galleryId    String   @map("gallery_id")
+  mediaUrl     String   @map("media_url")
+  mediaType    String   @map("media_type") // image, video
+  caption      String?
+  displayOrder Int      @default(0) @map("display_order")
+
+  gallery Gallery @relation(fields: [galleryId], references: [id], onDelete: Cascade)
+
+  @@map("gallery_items")
+}
+
+model MemorySubmission {
+  id        String       @id @default(uuid())
+  eventId   String       @map("event_id")
+  customerId String      @map("customer_id")
+  mediaUrl  String       @map("media_url")
+  caption   String?
+  status    MemoryStatus @default(PENDING)
+  moderatedBy String?    @map("moderated_by")
+  createdAt DateTime     @default(now()) @map("created_at")
+
+  event    Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  customer User  @relation(fields: [customerId], references: [id])
+
+  @@index([eventId])
+  @@index([status])
+  @@map("memories_submissions")
+}
+
+// ============================================
+// PLAYLIST
+// ============================================
+model Playlist {
+  id          String   @id @default(uuid())
+  eventId     String   @map("event_id")
+  title       String
+  description String?
+  coverUrl    String?  @map("cover_url")
+  platform    String   // spotify, youtube_music
+  url         String
+  displayOrder Int     @default(0) @map("display_order")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@map("playlists")
+}
+
+// ============================================
+// NOTIFICATIONS
+// ============================================
+model Notification {
+  id        String             @id @default(uuid())
+  userId    String             @map("user_id")
+  type      String
+  title     String
+  body      String
+  channel   NotificationChannel
+  status    NotificationStatus @default(PENDING)
+  sentAt    DateTime?          @map("sent_at")
+  createdAt DateTime           @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([type])
+  @@map("notifications")
+}
+
+model NotificationTemplate {
+  id        String   @id @default(uuid())
+  code      String   @unique
+  subject   String
+  bodyHtml  String   @map("body_html")
+  variables Json?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("notification_templates")
+}
+
+// ============================================
+// MEDIA & SETTINGS
+// ============================================
+model MediaAsset {
+  id           String   @id @default(uuid())
+  filename     String
+  originalName String   @map("original_name")
+  mimeType     String   @map("mime_type")
+  sizeBytes    Int      @map("size_bytes")
+  url          String
+  uploadedBy   String   @map("uploaded_by")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@map("media_assets")
+}
+
+model Setting {
+  key         String   @id @map("key")
+  value       Json
+  description String?
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("settings")
+}
+
+// ============================================
+// AUDIT LOG
+// ============================================
+model AuditLog {
+  id          String   @id @default(uuid())
+  userId      String?  @map("user_id")
+  action      AuditAction
+  entityType  String   @map("entity_type")
+  entityId    String?  @map("entity_id")
+  oldValues   Json?    @map("old_values")
+  newValues   Json?    @map("new_values")
+  ipAddress   String?  @map("ip_address")
+  userAgent   String?  @map("user_agent")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([entityType, entityId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
+}

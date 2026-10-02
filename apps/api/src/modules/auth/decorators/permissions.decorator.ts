@@ -1,0 +1,7 @@
+import { SetMetadata } from '@nestjs/common'
+
+export const PERMISSIONS_KEY = 'permissions'
+export const Permissions = (...permissions: string[]) => SetMetadata(PERMISSIONS_KEY, permissions)
+
+export const CURRENT_USER_KEY = 'currentUser'
+export const CurrentUser = () => SetMetadata(CURRENT_USER_KEY, true)

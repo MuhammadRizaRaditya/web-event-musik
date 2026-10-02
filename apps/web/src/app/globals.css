@@ -1,0 +1,234 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 24 100% 50%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 24 100% 50%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 24 100% 50%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 24 100% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .animate-in {
+    animation: animateIn 0.3s ease-out;
+  }
+  @keyframes animateIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-gray-100 dark:bg-dark-800;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 dark:bg-dark-600 rounded-full;
+}
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400 dark:bg-dark-500;
+}
+
+/* Focus visible for accessibility */
+:focus-visible {
+  @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-white dark:ring-offset-dark-900;
+}
+
+/* Selection */
+::selection {
+  @apply bg-primary/20 text-primary;
+}
+
+/* PWA specific */
+@media (display-mode: standalone) {
+  body {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  input, textarea, [contenteditable] {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+}
+
+/* Offline indicator */
+.offline-banner {
+  @apply fixed top-0 left-0 right-0 h-4 bg-amber-500 text-white text-center text-sm font-medium z-50;
+  animation: slideDown 0.3s ease-out;
+}
+
+/* Loading states */
+.skeleton {
+  @apply animate-pulse bg-gray-200 dark:bg-dark-700 rounded;
+}
+
+/* Hero section */
+.hero-gradient {
+  background: linear-gradient(135deg, #0A0A0A 0%, #1A1A1A 50%, #0A0A0A 100%);
+}
+
+/* Countdown timer */
+.countdown-digit {
+  @apply font-display text-4xl md:text-6xl font-bold tabular-nums;
+}
+
+/* QR Scanner */
+.scanner-overlay {
+  @apply absolute inset-0 bg-black/50 flex items-center justify-center;
+}
+.scanner-frame {
+  @apply relative w-64 h-64 border-4 border-primary rounded-lg shadow-2xl;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.7);
+}
+.scanner-line {
+  @apply absolute left-0 right-0 h-1 bg-primary/80 animate-pulse;
+}
+
+/* Admin sidebar */
+.sidebar-link {
+  @apply flex items-center gap-3 px-4 py-3 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-800 rounded-lg transition-colors;
+}
+.sidebar-link.active {
+  @apply bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary font-medium;
+}
+
+/* Dashboard cards */
+.dashboard-card {
+  @apply bg-white dark:bg-dark-900 rounded-xl border border-gray-200 dark:border-dark-700 p-6 shadow-sm hover:shadow-md transition-shadow;
+}
+
+/* Form styles */
+.form-group {
+  @apply space-y-1.5;
+}
+.form-label {
+  @apply block text-sm font-medium text-gray-700 dark:text-gray-300;
+}
+.form-input {
+  @apply w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-dark-600 bg-white dark:bg-dark-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all;
+}
+.form-error {
+  @apply text-sm text-red-600 dark:text-red-400;
+}
+.form-helper {
+  @apply text-sm text-gray-500 dark:text-gray-400;
+}
+
+/* Button variants */
+.btn {
+  @apply inline-flex items-center justify-center font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
+}
+.btn-primary {
+  @apply btn bg-primary text-white hover:bg-primary/90 h-10 px-4 py-2;
+}
+.btn-secondary {
+  @apply btn bg-gray-100 dark:bg-dark-800 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-dark-700 h-10 px-4 py-2;
+}
+.btn-outline {
+  @apply btn border border-gray-300 dark:border-dark-600 bg-transparent hover:bg-gray-100 dark:hover:bg-dark-800 h-10 px-4 py-2;
+}
+.btn-ghost {
+  @apply btn bg-transparent hover:bg-gray-100 dark:hover:bg-dark-800 h-10 px-4 py-2;
+}
+.btn-destructive {
+  @apply btn bg-red-600 text-white hover:bg-red-700 h-10 px-4 py-2;
+}
+.btn-sm {
+  @apply h-9 px-3 text-sm;
+}
+.btn-lg {
+  @apply h-11 px-8 text-lg;
+}
+.btn-icon {
+  @apply h-10 w-10;
+}
+
+/* Table styles */
+.data-table {
+  @apply w-full caption-bottom text-sm;
+}
+.data-table th {
+  @apply h-12 px-4 text-left align-middle font-medium text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-dark-700;
+}
+.data-table td {
+  @apply p-4 align-middle border-b border-gray-100 dark:border-dark-800;
+}
+.data-table tr:hover td {
+  @apply bg-gray-50 dark:bg-dark-800/50;
+}
+
+/* Badge variants */
+.badge {
+  @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+}
+.badge-primary { @apply badge bg-primary/10 text-primary; }
+.badge-success { @apply badge bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400; }
+.badge-warning { @apply badge bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-400; }
+.badge-destructive { @apply badge bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400; }
+.badge-outline { @apply badge border border-gray-300 dark:border-dark-600; }
+
+/* Toast customization */
+.toast-container {
+  @apply fixed bottom-4 right-4 z-50 flex flex-col gap-2;
+}
