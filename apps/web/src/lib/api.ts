@@ -16,8 +16,10 @@ export const api = axios.create({
 api.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     const session = await getSession()
-    if (session?.accessToken) {
-      config.headers.Authorization = `Bearer ${session.accessToken}`
+    const accessToken = (session as { accessToken?: string } | null | undefined)?.accessToken
+
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`
     }
     return config
   },
@@ -35,15 +37,20 @@ api.interceptors.response.use(
 
       try {
         const session = await getSession()
-        if (session?.refreshToken) {
+        const refreshToken = (session as { refreshToken?: string } | null | undefined)?.refreshToken
+
+        if (refreshToken) {
           const response = await axios.post(`${API_URL}/api/v1/auth/refresh`, {
-            refreshToken: session.refreshToken
+            refreshToken
           })
 
-          const { accessToken, refreshToken } = response.data.data
+          const { accessToken, refreshToken: nextRefreshToken } = response.data.data
           // Update session (this would need next-auth update logic)
           // For now, just retry with new token
           originalRequest.headers.Authorization = `Bearer ${accessToken}`
+          if (nextRefreshToken) {
+            ;(originalRequest.headers as any).refreshToken = nextRefreshToken
+          }
           return api(originalRequest)
         }
       } catch (refreshError) {

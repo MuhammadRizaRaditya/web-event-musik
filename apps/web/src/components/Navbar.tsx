@@ -17,6 +17,7 @@ const navigation = [
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const { data: session, status } = useSession()
+  const userRole = (session?.user as { role?: string } | undefined)?.role
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-dark-950/95 backdrop-blur-sm border-b border-dark-800">
@@ -55,7 +56,7 @@ export function Navbar() {
                   <User className="h-4 w-4 mr-2" />
                   Akun Saya
                 </Link>
-                {session.user.role === 'admin' || session.user.role === 'organizer' ? (
+                {userRole === 'admin' || userRole === 'organizer' ? (
                   <Link href="/admin" className="btn btn-primary btn-sm">
                     <LayoutDashboard className="h-4 w-4 mr-2" />
                     Dashboard
@@ -121,7 +122,7 @@ export function Navbar() {
                   >
                     Akun Saya
                   </Link>
-                  {session.user.role === 'admin' || session.user.role === 'organizer' ? (
+                  {userRole === 'admin' || userRole === 'organizer' ? (
                     <Link
                       href="/admin"
                       className="block px-2 py-2 text-primary font-medium rounded-lg"

@@ -112,8 +112,6 @@ export class AuthService {
         throw new UnauthorizedException('Refresh token tidak valid')
       }
 
-      // In a real implementation, you'd check against a stored hash of the refresh token
-      // For now, we'll generate new tokens
       const user = await this.prisma.user.findUnique({
         where: { id: payload.sub },
         include: {
@@ -157,7 +155,7 @@ export class AuthService {
     // In production, verify token from database
     // For now, simple implementation
     const user = await this.prisma.user.findFirst({
-      where: { email: token } // This would be a real token lookup
+      where: { email: token }
     })
 
     if (!user) {
@@ -218,9 +216,9 @@ export class AuthService {
     return { message: 'Password berhasil direset' }
   }
 
-  private async generateTokens(user: any) {
-    const permissions = user.userRoles.flatMap(ur =>
-      ur.role.rolePermissions.map(rp => rp.permission.name)
+  private async generateTokens(user: { id: string; email: string; isActive: boolean; userRoles: any[] }) {
+    const permissions = user.userRoles.flatMap(
+      (ur: any) => ur.role.rolePermissions.map((rp: any) => rp.permission.name)
     )
 
     const roles = user.userRoles.map(ur => ur.role.name)

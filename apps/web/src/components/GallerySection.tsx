@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { Image as ImageIcon, Video, Expand, Instagram, Share2, Heart } from 'lucide-react'
+import { Image as ImageIcon, Play, Expand, Instagram, Share2, Heart } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const galleryImages = [

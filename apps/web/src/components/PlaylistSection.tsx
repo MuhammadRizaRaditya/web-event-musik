@@ -1,6 +1,6 @@
 'use client'
 
-import { Spotify, Play, Music, Volume2 } from 'lucide-react'
+import { Music2, Play, Music, Volume2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const playlists = [
@@ -56,8 +56,8 @@ export function PlaylistSection() {
             </p>
           </div>
           <a href="/playlist" className="btn btn-primary">
-            <Spotify className="h-5 w-5 mr-2 text-green-500" />
-            Buka di Spotify
+            <Music2 className="h-5 w-5 mr-2 text-green-500" />
+            Buka Playlist
           </a>
         </div>
 
@@ -75,7 +75,7 @@ export function PlaylistSection() {
                 <div className="flex-1 p-6 flex flex-col justify-between">
                   <div>
                     <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-500/20 text-green-400 text-xs font-medium rounded-full mb-3">
-                      <Spotify className="h-3 w-3" />
+                      <Music2 className="h-3 w-3" />
                       {playlist.platform}
                     </span>
                     <h3 className="font-bold text-white text-lg mb-2 group-hover:text-primary transition-colors">
@@ -89,7 +89,7 @@ export function PlaylistSection() {
                   </div>
                   <a href={playlist.url} target="_blank" rel="noopener noreferrer" className="btn btn-outline btn-sm border-gray-700 text-gray-300 hover:bg-gray-800 hover:border-gray-600 w-full text-center mt-4">
                     Buka Playlist
-                    <Spotify className="h-4 w-4 ml-2 text-green-500" />
+                    <Music2 className="h-4 w-4 ml-2 text-green-500" />
                   </a>
                 </div>
               </div>
@@ -100,7 +100,7 @@ export function PlaylistSection() {
         <div className="text-center mt-12">
           <a href="/playlist" className="btn btn-outline btn-lg border-gray-700 text-gray-300 hover:bg-gray-800 hover:border-gray-600">
             Lihat Semua Playlist
-            <Spotify className="h-5 w-5 ml-2 text-green-500" />
+            <Music2 className="h-5 w-5 ml-2 text-green-500" />
           </a>
         </div>
       </div>

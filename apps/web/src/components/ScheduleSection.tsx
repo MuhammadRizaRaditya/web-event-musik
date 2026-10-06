@@ -4,7 +4,16 @@ import { useState } from 'react'
 import { Clock, Music, MapPin, ChevronDown, ChevronUp } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-const scheduleData = {
+type ScheduleItem = {
+  time: string
+  endTime: string
+  stage: 'Main Stage' | 'Hip Hop Stage' | 'Indie Stage'
+  artist: string
+  genre: string
+  headliner?: boolean
+}
+
+const scheduleData: Record<string, ScheduleItem[]> = {
   'Hari 1 - 31 Des 2026': [
     { time: '14:00', endTime: '15:00', stage: 'Main Stage', artist: 'Opening DJ Set', genre: 'EDM' },
     { time: '15:00', endTime: '16:00', stage: 'Main Stage', artist: 'Bassface', genre: 'EDM' },
@@ -14,12 +23,12 @@ const scheduleData = {
     { time: '19:30', endTime: '20:30', stage: 'Main Stage', artist: 'Reality Club', genre: 'Indie Pop' },
     { time: '20:30', endTime: '22:00', stage: 'Main Stage', artist: 'NIKI', genre: 'Pop/R&B', headliner: true },
     { time: '22:00', endTime: '23:30', stage: 'Main Stage', artist: 'Martin Garrix', genre: 'EDM', headliner: true },
-    
+
     { time: '14:30', endTime: '15:30', stage: 'Hip Hop Stage', artist: 'DJ Jizzy', genre: 'EDM' },
     { time: '15:30', endTime: '16:30', stage: 'Hip Hop Stage', artist: 'Matter Mos', genre: 'Hip Hop' },
     { time: '16:30', endTime: '17:30', stage: 'Hip Hop Stage', artist: 'Ramengvrl', genre: 'Hip Hop' },
     { time: '17:30', endTime: '19:00', stage: 'Hip Hop Stage', artist: 'Rich Brian', genre: 'Hip Hop', headliner: true },
-    
+
     { time: '15:00', endTime: '16:00', stage: 'Indie Stage', artist: 'Local Band Showcase', genre: 'Rock/Indie' },
     { time: '16:00', endTime: '17:00', stage: 'Indie Stage', artist: 'The Adams', genre: 'Rock' },
     { time: '17:00', endTime: '18:30', stage: 'Indie Stage', artist: 'Indie Stage Headliner', genre: 'Indie', headliner: true }
@@ -72,12 +81,17 @@ export function ScheduleSection() {
               </tr>
             </thead>
             <tbody>
-              {scheduleData[days[activeDay]]
-                .filter(item => item.stage === 'Main Stage')
-                .map((mainItem, index) => {
-                  const hiphopItem = scheduleData[days[activeDay]].find(i => i.stage === 'Hip Hop Stage' && i.time === mainItem.time)
-                  const indieItem = scheduleData[days[activeDay]].find(i => i.stage === 'Indie Stage' && i.time === mainItem.time)
-                  
+              {(scheduleData[days[activeDay]] ?? [])
+                .filter((item: ScheduleItem) => item.stage === 'Main Stage')
+                .map((mainItem: ScheduleItem) => {
+                  const currentDayItems = scheduleData[days[activeDay]] ?? []
+                  const hiphopItem = currentDayItems.find(
+                    (item: ScheduleItem) => item.stage === 'Hip Hop Stage' && item.time === mainItem.time
+                  )
+                  const indieItem = currentDayItems.find(
+                    (item: ScheduleItem) => item.stage === 'Indie Stage' && item.time === mainItem.time
+                  )
+
                   return (
                     <tr key={`${mainItem.time}-${mainItem.stage}`} className="border-b border-dark-800/50 hover:bg-dark-800/30 transition-colors">
                       <td className="py-4 px-4 font-mono text-primary font-medium">

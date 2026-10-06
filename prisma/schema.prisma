@@ -476,6 +476,7 @@ model TicketCheckin {
   staffId   String @map("staff_id")
   scannedAt DateTime @map("scanned_at")
   isOffline Boolean @default(false) @map("is_offline")
+  status    String   @default("PENDING") @map("status")
   syncedAt  DateTime? @map("synced_at")
   deviceId  String? @map("device_id")
 

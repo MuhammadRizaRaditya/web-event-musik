@@ -1,0 +1,44 @@
+name: CD Deployment
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repository
+      uses: actions/checkout@v4
+
+      - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+      - name: Install dependencies
+      run: npm install
+
+      - name: Generate Prisma Client
+      run: npx prisma generate
+
+      - name: Run Prisma migrations
+      run: npx prisma db push
+
+      - name: Build Next.js app
+      run: cd apps/web && npm run build
+
+      - name: Build NestJS app
+      run: cd apps/api && npm run build
+
+      - name: PM2 restart
+      run: |
+        cd apps/web
+        pm2 delete soundwave-web 2>/dev/null || true
+        pm2 start ecosystem.config.js --env production
+
+      - name: Verify deployment
+      run: |
+        echo "Deployment completed"
+        pm2 list

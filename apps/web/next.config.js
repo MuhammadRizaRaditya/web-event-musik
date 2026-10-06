@@ -24,7 +24,7 @@ const withPWA = require('next-pwa')({
       }
     },
     {
-      urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|avif|ico)$/i,
+      urlPattern: /^\.(?:png|jpg|jpeg|svg|gif|webp|avif|ico)$/i,
       handler: 'CacheFirst',
       options: {
         cacheName: 'images',
@@ -65,6 +65,7 @@ const withPWA = require('next-pwa')({
   ]
 })
 
+/** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ['@soundwave/ui', '@soundwave/prisma'],
@@ -112,6 +113,15 @@ const nextConfig = {
         ]
       }
     ]
+  },
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        '@': require('path').join(__dirname, 'src'),
+      }
+    }
+    return config
   }
 }
 

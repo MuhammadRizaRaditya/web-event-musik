@@ -31,7 +31,7 @@ export class EventsService {
         startDate: new Date(createEventDto.startDate),
         endDate: new Date(createEventDto.endDate),
         status: EventStatus.DRAFT
-      },
+      } as any,
       include: { venue: true }
     })
 
@@ -72,7 +72,7 @@ export class EventsService {
         }
       }),
       this.prisma.event.count({ where })
-    })
+    ])
 
     return {
       data: events,
@@ -162,7 +162,6 @@ export class EventsService {
       throw new ForbiddenException('Anda tidak memiliki akses')
     }
 
-    // Validate status transition
     const validTransitions: Record<EventStatus, EventStatus[]> = {
       [EventStatus.DRAFT]: [EventStatus.PUBLISHED, EventStatus.CANCELLED],
       [EventStatus.PUBLISHED]: [EventStatus.ONGOING, EventStatus.CANCELLED],
@@ -175,7 +174,6 @@ export class EventsService {
       throw new ConflictException(`Tidak bisa mengubah status dari ${event.status} ke ${status}`)
     }
 
-    // If publishing, validate ticket types
     if (status === EventStatus.PUBLISHED) {
       const ticketTypes = await this.prisma.ticketType.findMany({
         where: { eventId: id, quota: { gt: 0 } }
@@ -185,7 +183,6 @@ export class EventsService {
       }
     }
 
-    // If cancelling, cascade to ticket types and pending orders
     if (status === EventStatus.CANCELLED) {
       await this.prisma.$transaction(async (tx) => {
         await tx.ticketType.updateMany({
@@ -196,7 +193,6 @@ export class EventsService {
           where: { eventId: id, status: 'PENDING' },
           data: { status: 'CANCELLED' }
         })
-        // Release quota for cancelled orders
         for (const order of await tx.order.findMany({
           where: { eventId: id, status: 'CANCELLED' },
           include: { items: true }

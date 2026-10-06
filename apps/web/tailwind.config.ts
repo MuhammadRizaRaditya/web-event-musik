@@ -10,7 +10,15 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // Tambahan warna standard Shadcn UI agar tidak eror compile
+        border: 'hsl(var(--border, 240 5.9% 90%))',
+        input: 'hsl(var(--input, 240 5.9% 90%))',
+        ring: 'hsl(var(--ring, 240 5.9% 10%))',
+        background: 'hsl(var(--background, 0 0% 100%))',
+        foreground: 'hsl(var(--foreground, 240 10% 3.9%))',
+        
         primary: {
+          DEFAULT: '#FF6B00', // Warna utama jika dipanggil bg-primary
           50: '#fff4ed',
           100: '#ffe8d1',
           200: '#ffd1a3',

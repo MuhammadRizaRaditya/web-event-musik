@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Facebook, Twitter, Instagram, YouTube, Spotify, Mail, MapPin, Phone, Heart, Music } from 'lucide-react'
+import { Facebook, Twitter, Instagram, Youtube, Music2, MapPin, Phone, Heart } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const footerLinks = {
@@ -39,8 +39,8 @@ const socialLinks = [
   { name: 'Instagram', href: 'https://instagram.com/soundwavefest', icon: Instagram, color: 'text-pink-500' },
   { name: 'Twitter', href: 'https://twitter.com/soundwavefest', icon: Twitter, color: 'text-blue-400' },
   { name: 'Facebook', href: 'https://facebook.com/soundwavefest', icon: Facebook, color: 'text-blue-600' },
-  { name: 'YouTube', href: 'https://youtube.com/soundwavefest', icon: YouTube, color: 'text-red-500' },
-  { name: 'Spotify', href: 'https://spotify.com/soundwavefest', icon: Spotify, color: 'text-green-500' }
+  { name: 'YouTube', href: 'https://youtube.com/soundwavefest', icon: Youtube, color: 'text-red-500' },
+  { name: 'Spotify', href: 'https://spotify.com/soundwavefest', icon: Music2, color: 'text-green-500' }
 ]
 
 export function Footer() {

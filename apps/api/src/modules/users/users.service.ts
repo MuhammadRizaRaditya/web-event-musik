@@ -113,7 +113,7 @@ export class UsersService {
         }
       }),
       this.prisma.order.count({ where })
-    })
+    ])
 
     return {
       data: orders,
